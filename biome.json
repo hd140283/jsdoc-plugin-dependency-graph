@@ -1,19 +1,14 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.6.6/schema.json",
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
 	"files": {
 		"includes": ["**", "!**/node_modules", "!**/coverage"]
 	},
 	"formatter": {
-		"indentStyle": "tab"
-	},
-	"linter": {
-		"rules": {
-			"preset": "recommended"
-		}
+		"lineWidth": 120
 	},
 	"javascript": {
 		"formatter": {
-			"quoteStyle": "double"
+			"quoteStyle": "single"
 		}
 	}
 }

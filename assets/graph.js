@@ -6,17 +6,16 @@
 //   hover        highlight the node, its edges and the nodes at the other end
 //   right-click  pin the highlight (right-click the node again, right-click empty
 //                space, or press Escape to release)
-for (const graph of document.querySelectorAll(".dependency-graph__canvas")) {
-	const titleOf = (element) =>
-		element.querySelector("title")?.textContent ?? "";
+for (const graph of document.querySelectorAll('.dependency-graph__canvas')) {
+	const titleOf = (element) => element.querySelector('title')?.textContent ?? '';
 
 	const nodes = new Map();
-	for (const node of graph.querySelectorAll(".node")) {
+	for (const node of graph.querySelectorAll('.node')) {
 		nodes.set(titleOf(node), node);
 	}
 
-	const edges = [...graph.querySelectorAll(".edge")].map((edge) => {
-		const [from, to] = titleOf(edge).split("->");
+	const edges = [...graph.querySelectorAll('.edge')].map((edge) => {
+		const [from, to] = titleOf(edge).split('->');
 		return { element: edge, from, to };
 	});
 
@@ -26,27 +25,27 @@ for (const graph of document.querySelectorAll(".dependency-graph__canvas")) {
 	let hovered = null;
 
 	const clear = () => {
-		graph.classList.remove("is-hovering");
-		for (const element of graph.querySelectorAll(".is-current, .is-related")) {
-			element.classList.remove("is-current", "is-related");
+		graph.classList.remove('is-hovering');
+		for (const element of graph.querySelectorAll('.is-current, .is-related')) {
+			element.classList.remove('is-current', 'is-related');
 		}
 	};
 
 	const highlight = (name) => {
 		clear();
-		graph.classList.add("is-hovering");
-		nodes.get(name)?.classList.add("is-current");
+		graph.classList.add('is-hovering');
+		nodes.get(name)?.classList.add('is-current');
 		for (const { element, from, to } of edges) {
 			if (from !== name && to !== name) continue;
-			element.classList.add("is-related");
-			nodes.get(from === name ? to : from)?.classList.add("is-related");
+			element.classList.add('is-related');
+			nodes.get(from === name ? to : from)?.classList.add('is-related');
 		}
 	};
 
 	const pin = (name) => {
 		pinned = name;
 		for (const node of nodes.values()) {
-			node.classList.toggle("is-pinned", node === nodes.get(name));
+			node.classList.toggle('is-pinned', node === nodes.get(name));
 		}
 		if (name !== null) {
 			highlight(name);
@@ -58,18 +57,18 @@ for (const graph of document.querySelectorAll(".dependency-graph__canvas")) {
 	};
 
 	for (const [name, node] of nodes) {
-		node.addEventListener("mouseenter", () => {
+		node.addEventListener('mouseenter', () => {
 			hovered = name;
 			if (pinned === null) highlight(name);
 		});
-		node.addEventListener("mouseleave", () => {
+		node.addEventListener('mouseleave', () => {
 			hovered = null;
 			if (pinned === null) clear();
 		});
 	}
 
-	graph.addEventListener("contextmenu", (event) => {
-		const node = event.target.closest(".node");
+	graph.addEventListener('contextmenu', (event) => {
+		const node = event.target.closest('.node');
 		if (node) {
 			event.preventDefault();
 			const name = titleOf(node);
@@ -80,7 +79,7 @@ for (const graph of document.querySelectorAll(".dependency-graph__canvas")) {
 		}
 	});
 
-	document.addEventListener("keydown", (event) => {
-		if (event.key === "Escape" && pinned !== null) pin(null);
+	document.addEventListener('keydown', (event) => {
+		if (event.key === 'Escape' && pinned !== null) pin(null);
 	});
 }

@@ -1,4 +1,4 @@
-import { defineConfig } from "vitest/config";
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
 	test: {
@@ -7,9 +7,9 @@ export default defineConfig({
 		// is not merged from two differently mapped sources.
 		server: { deps: { external: [/\.cjs$/] } },
 		coverage: {
-			provider: "v8",
-			include: ["index.cjs", "lib/**"],
-			reporter: ["text", "html", "lcov"],
+			provider: 'v8',
+			include: ['index.cjs', 'lib/**'],
+			reporter: ['text', 'html', 'lcov'],
 		},
 	},
 });
