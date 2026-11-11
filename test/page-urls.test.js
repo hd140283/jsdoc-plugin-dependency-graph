@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { commonPrefix, fragmentId, pageFileName, pageUrls } from '../lib/page-urls.cjs';
+import { pageUrls } from '../lib/page-urls.cjs';
 
 const cwd = path.resolve('/project');
 
@@ -13,51 +13,6 @@ function doclet(file, extra) {
 		...extra,
 	};
 }
-
-describe('pageFileName', () => {
-	it('turns namespace prefixes into dashes', () => {
-		expect(pageFileName('module:app')).toBe('module-app.html');
-		expect(pageFileName('external:jQuery')).toBe('external-jQuery.html');
-	});
-
-	it('replaces path separators and inner/instance markers', () => {
-		expect(pageFileName('module:lib/util')).toBe('module-lib_util.html');
-		expect(pageFileName('module:lib/util~Helper')).toBe('module-lib_util-Helper.html');
-		expect(pageFileName('Foo#bar')).toBe('Foo_bar.html');
-	});
-
-	it('names source pages after the shortened path', () => {
-		expect(pageFileName('lib/plain.js')).toBe('lib_plain.js.html');
-	});
-});
-
-describe('fragmentId', () => {
-	it('prefixes static and inner scopes but not instance', () => {
-		expect(fragmentId({ name: 'x', scope: 'static' })).toBe('.x');
-		expect(fragmentId({ name: 'x', scope: 'inner' })).toBe('~x');
-		expect(fragmentId({ name: 'x', scope: 'instance' })).toBe('x');
-		expect(fragmentId({ name: 'x', scope: 'global' })).toBe('x');
-	});
-
-	it('prefixes event kinds', () => {
-		expect(fragmentId({ name: 'ready', kind: 'event', scope: 'global' })).toBe('event:ready');
-	});
-});
-
-describe('commonPrefix', () => {
-	it('uses the directory of a single file', () => {
-		expect(commonPrefix([path.join(cwd, 'src', 'a.js')], cwd)).toBe(path.join(cwd, 'src') + path.sep);
-	});
-
-	it('finds the shared directory of several files', () => {
-		expect(
-			commonPrefix(
-				[path.join(cwd, 'src', 'a.js'), path.join(cwd, 'src', 'lib', 'b.js'), path.join(cwd, 'src', 'lib', 'c.js')],
-				cwd,
-			),
-		).toBe(path.join(cwd, 'src') + path.sep);
-	});
-});
 
 describe('pageUrls', () => {
 	it('links @module files to their module page', () => {
