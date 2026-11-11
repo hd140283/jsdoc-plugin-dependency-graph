@@ -128,4 +128,64 @@ describe('pageUrls', () => {
 		});
 		expect(urls.size).toBe(0);
 	});
+
+	it('ignores package doclets, ignored doclets and members of anonymous scopes', () => {
+		const urls = pageUrls({
+			cwd,
+			doclets: [
+				doclet('package.json', { kind: 'package', longname: 'package:x', name: 'x' }),
+				doclet('src/skipped.js', {
+					kind: 'function',
+					longname: 'skipped',
+					name: 'skipped',
+					scope: 'global',
+					ignore: true,
+				}),
+				doclet('src/anonymous.js', {
+					kind: 'function',
+					longname: '<anonymous>~inner',
+					name: 'inner',
+					scope: 'inner',
+					memberof: '<anonymous>',
+				}),
+			],
+		});
+		expect(urls.size).toBe(0);
+	});
+
+	it('links private doclets when they are published', () => {
+		const urls = pageUrls({
+			cwd,
+			includePrivate: true,
+			doclets: [
+				doclet('src/secret.js', {
+					kind: 'function',
+					longname: 'hide',
+					name: 'hide',
+					scope: 'global',
+					access: 'private',
+				}),
+			],
+		});
+		expect(urls.get('src/secret.js')).toBe('global.html#hide');
+	});
+
+	it.each([
+		['no directory', undefined],
+		['the string "null" as directory', 'null'],
+	])('takes the file name alone when the doclet has %s', (_description, directory) => {
+		const urls = pageUrls({
+			cwd,
+			doclets: [
+				{
+					meta: { path: directory, filename: path.join(cwd, 'src', 'loose.js') },
+					kind: 'function',
+					longname: 'loose',
+					name: 'loose',
+					scope: 'global',
+				},
+			],
+		});
+		expect(urls.get('src/loose.js')).toBe('global.html#loose');
+	});
 });

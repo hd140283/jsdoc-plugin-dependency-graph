@@ -16,4 +16,19 @@ describe('pageFileName', () => {
 	it('names source pages after the shortened path', () => {
 		expect(pageFileName('lib/plain.js')).toBe('lib_plain.js.html');
 	});
+
+	it('drops a trailing variation', () => {
+		expect(pageFileName('Foo(2)')).toBe('Foo.html');
+	});
+
+	it('drops a leading dot or dash', () => {
+		expect(pageFileName('.hidden')).toBe('hidden.html');
+		expect(pageFileName('~inner')).toBe('inner.html');
+	});
+
+	it('falls back to an underscore when nothing is left', () => {
+		expect(pageFileName('')).toBe('_.html');
+		expect(pageFileName(undefined)).toBe('_.html');
+		expect(pageFileName('.')).toBe('_.html');
+	});
 });

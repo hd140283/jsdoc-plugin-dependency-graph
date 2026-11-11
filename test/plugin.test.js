@@ -1,8 +1,9 @@
 // index.cjs requires `jsdoc/env` and `jsdoc/util/logger`, which only resolve
 // inside JSDoc's own module loader. A Node resolve hook points those two
 // specifiers at the real files, so the plugin runs against the genuine env
-// object and logger. Nothing else is faked: the graph is rendered by the real
-// child process on the fixture project.
+// object and logger. The graph is rendered by the real child process on the
+// fixture project; only the test for a child process that cannot start swaps
+// `execFileSync` for a stand-in.
 
 import { createRequire, registerHooks } from 'node:module';
 import path from 'node:path';
@@ -27,6 +28,17 @@ afterAll(() => hook.deregister());
 
 const env = require('jsdoc/env');
 const logger = require('jsdoc/util/logger');
+
+// index.cjs takes `execFileSync` from child_process when it loads. Route the
+// call through a variable first, so a test can replace it afterwards.
+const childProcess = require('node:child_process');
+const realExecFileSync = childProcess.execFileSync;
+let execFileSync = realExecFileSync;
+childProcess.execFileSync = (...args) => execFileSync(...args);
+afterAll(() => {
+	childProcess.execFileSync = realExecFileSync;
+});
+
 const { handlers } = require('../index.cjs');
 
 const fixture = fileURLToPath(new URL('./fixtures/basic/', import.meta.url));
@@ -77,6 +89,7 @@ beforeEach(() => {
 	env.opts = { readme: README };
 	env.conf = {};
 	env.sourceFiles = sourceFiles;
+	execFileSync = realExecFileSync;
 	for (const messages of Object.values(logged)) messages.length = 0;
 });
 
@@ -162,6 +175,15 @@ describe('processingComplete', { timeout: 60_000 }, () => {
 		expect(logged.error[0]).toContain('nope.json');
 	});
 
+	it('logs the reason when the child process cannot start', () => {
+		execFileSync = () => {
+			throw new Error('spawnSync node ENOENT');
+		};
+
+		expect(run()).toBe(README);
+		expect(logged.error).toEqual(['dependency-graph: could not render the graph.\nspawnSync node ENOENT']);
+	});
+
 	it('does nothing when JSDoc only explains (-X)', () => {
 		env.opts.explain = true;
 
@@ -169,8 +191,11 @@ describe('processingComplete', { timeout: 60_000 }, () => {
 		expect(logged.info).toEqual([]);
 	});
 
-	it('does nothing without source files', () => {
-		env.sourceFiles = [];
+	it.each([
+		['an empty list of source files', []],
+		['no list of source files', undefined],
+	])('does nothing with %s', (_description, files) => {
+		env.sourceFiles = files;
 
 		expect(run()).toBe(README);
 		expect(logged.info).toEqual([]);

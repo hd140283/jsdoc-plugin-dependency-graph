@@ -12,4 +12,12 @@ describe('fragmentId', () => {
 	it('prefixes event kinds', () => {
 		expect(fragmentId({ name: 'ready', kind: 'event', scope: 'global' })).toBe('event:ready');
 	});
+
+	it('appends the variation', () => {
+		expect(fragmentId({ name: 'x', variation: '(2)', scope: 'static' })).toBe('.x(2)');
+	});
+
+	it('is empty for a doclet without a name', () => {
+		expect(fragmentId({ scope: 'global' })).toBe('');
+	});
 });
