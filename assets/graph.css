@@ -1,0 +1,59 @@
+/* Styles for the embedded dependency graph.
+   State classes (is-hovering / is-current / is-related / is-pinned) are toggled by graph.js. */
+
+.dependency-graph__stats {
+	opacity: 0.7;
+}
+
+/* Keep Graphviz's natural size; scroll horizontally only when the graph is wider than the page. */
+.dependency-graph__canvas {
+	overflow-x: auto;
+}
+
+.dependency-graph__canvas svg {
+	display: block;
+	max-width: none;
+}
+
+.dependency-graph__canvas .node,
+.dependency-graph__canvas .edge {
+	transition: opacity 0.15s;
+}
+
+/* While hovering, fade everything unrelated to the hovered node. */
+.dependency-graph__canvas.is-hovering .node,
+.dependency-graph__canvas.is-hovering .edge {
+	opacity: 0.2;
+}
+
+.dependency-graph__canvas.is-hovering .node.is-current,
+.dependency-graph__canvas.is-hovering .node.is-related,
+.dependency-graph__canvas.is-hovering .edge.is-related {
+	opacity: 1;
+}
+
+/* Hovered node and its edges. */
+.dependency-graph__canvas .node.is-current path {
+	stroke: #d9480f;
+	stroke-width: 2;
+}
+
+/* A node pinned with right-click gets a heavier outline so it reads differently from a hover. */
+.dependency-graph__canvas .node.is-pinned path {
+	stroke-width: 4;
+	fill: #ffe8cc;
+}
+
+/* dependency-cruiser's theme draws edges at stroke-opacity 0.2; make highlighted ones opaque. */
+.dependency-graph__canvas .edge.is-related path {
+	stroke: #d9480f;
+	stroke-width: 2;
+	stroke-opacity: 1;
+}
+
+.dependency-graph__canvas .edge.is-related polygon {
+	stroke: #d9480f;
+	stroke-opacity: 1;
+	fill: #d9480f;
+	fill-opacity: 1;
+}
