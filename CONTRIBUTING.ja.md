@@ -29,7 +29,7 @@ JSDoc プラグインの入口である `index.cjs` と、ツールの設定フ�
 
 ## ドキュメント
 
-- API ドキュメントは [JSDoc](https://jsdoc.app) を使い、`pnpm docs` で `docs/` に生成する
+- API ドキュメントは [JSDoc](https://jsdoc.app) を使い、`pnpm run docs` で `docs/` に生成する
 - 型・説明は JSDoc で記述し、生成時に警告が出ないことを確認する
 - 型は JSDoc の型式で書き、TypeScript 構文は使わない。任意型は `{*}`、キー・バリューは `{Object.<string, function>}`、関数型は `{function(T): R}`
 - `const`／`export const` に代入したアロー関数には `@function` を付ける。付けないと引数・戻り値の表が生成されない。名前は変数名から推論されるので省略してよい

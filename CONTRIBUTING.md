@@ -29,7 +29,7 @@ The JSDoc plugin entry point, `index.cjs`, and tool config files are shaped by w
 
 ## Documentation
 
-- API docs are generated with [JSDoc](https://jsdoc.app). `pnpm docs` writes them to `docs/`
+- API docs are generated with [JSDoc](https://jsdoc.app). `pnpm run docs` writes them to `docs/`
 - Document types and descriptions with JSDoc, and keep the build free of warnings
 - Use JSDoc type syntax, not TypeScript syntax: `{*}` for any type, `{Object.<string, function>}` for key-value maps, and `{function(T): R}` for function types
 - Tag arrow functions assigned to `const` or `export const` with `@function`. Without it, JSDoc leaves out the parameter and return tables. The name can be omitted because JSDoc infers it from the variable
