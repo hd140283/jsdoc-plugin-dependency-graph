@@ -40,8 +40,7 @@
 	},
 	"scripts": {
 		"lint": "biome check --write",
-		"test": "vitest run",
-		"coverage": "vitest run --coverage"
+		"test": "vitest run --coverage"
 	},
 	"peerDependencies": {
 		"jsdoc": "^4.0.0"
