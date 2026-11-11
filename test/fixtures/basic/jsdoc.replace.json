@@ -1,0 +1,8 @@
+{
+	"plugins": ["../../../index.cjs"],
+	"dependencyGraph": {
+		"placement": "replace",
+		"title": false,
+		"hoverHighlight": false
+	}
+}
