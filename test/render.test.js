@@ -60,3 +60,32 @@ describe('render', { timeout: 60_000 }, () => {
 		);
 	});
 });
+
+describe('render on a project that imports external modules', { timeout: 60_000 }, () => {
+	const externals = fileURLToPath(new URL('./fixtures/externals/', import.meta.url));
+
+	beforeAll(() => {
+		process.chdir(externals);
+	});
+	afterAll(() => {
+		process.chdir(fixture);
+	});
+
+	it('leaves built-ins and unresolvable imports out by default', async () => {
+		const { svg, stats } = await render({ files, cwd: externals });
+
+		// index.js, local.js
+		expect(stats).toEqual({ modules: 2, dependencies: 1 });
+		expect(svg).toContain('src/local.js');
+		expect(svg).not.toContain('<title>path</title>');
+		expect(svg).not.toContain('missingpackage');
+	});
+
+	it('draws them when a dependency-cruiser config is given', async () => {
+		const { svg, stats } = await render({ files, cwd: externals, config: 'dependency-cruiser.json' });
+
+		expect(stats.modules).toBe(4);
+		expect(svg).toContain('<title>path</title>');
+		expect(svg).toContain('missingpackage');
+	});
+});

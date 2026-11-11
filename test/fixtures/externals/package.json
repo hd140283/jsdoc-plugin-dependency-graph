@@ -1,0 +1,5 @@
+{
+	"name": "externals-fixture",
+	"private": true,
+	"type": "module"
+}
