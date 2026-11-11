@@ -118,6 +118,23 @@ describe('processingComplete', { timeout: 60_000 }, () => {
 		expect(readme).not.toContain(README);
 	});
 
+	it('draws the graph with the reporter named by outputType', () => {
+		const readme = run({ outputType: 'archi' });
+
+		// src/index.js and the src/lib folder
+		expect(readme).toContain('2 modules / 1 dependencies');
+		expect(logged.error).toEqual([]);
+	});
+
+	it('logs an error and leaves the README alone when outputType is not supported', () => {
+		const readme = run({ outputType: 'mermaid' });
+
+		expect(readme).toBe(README);
+		expect(logged.error).toEqual([
+			'dependency-graph: unsupported outputType "mermaid". Use one of: dot, flat, ddot, archi.',
+		]);
+	});
+
 	it('warns about rule violations and still draws the graph', () => {
 		const readme = run({ config: 'dependency-cruiser.strict.json' });
 

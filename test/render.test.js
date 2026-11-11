@@ -59,6 +59,31 @@ describe('render', { timeout: 60_000 }, () => {
 			/dependency-cruiser config not found: .*nope\.json/,
 		);
 	});
+
+	it.each([
+		['dot', { modules: 4, dependencies: 3 }],
+		['flat', { modules: 4, dependencies: 3 }],
+		// src/index.js and the src/lib folder
+		['archi', { modules: 2, dependencies: 1 }],
+	])('draws the graph with outputType %s', async (outputType, expected) => {
+		const { svg, stats } = await render({ files, cwd: fixture, outputType });
+
+		expect(svg.startsWith('<svg')).toBe(true);
+		expect(stats).toEqual(expected);
+	});
+
+	it('draws folders with outputType ddot', async () => {
+		const { svg } = await render({ files, cwd: fixture, outputType: 'ddot' });
+
+		expect(svg).toContain('<title>src/lib</title>');
+		expect(svg).not.toContain('greeting.js');
+	});
+
+	it.each(['mermaid', 'x-dot-webpage', 'cdot'])('rejects the unsupported outputType %s', async (outputType) => {
+		await expect(render({ files, cwd: fixture, outputType })).rejects.toThrow(
+			`unsupported outputType "${outputType}". Use one of: dot, flat, ddot, archi.`,
+		);
+	});
 });
 
 describe('render on a project that imports external modules', { timeout: 60_000 }, () => {

@@ -19,6 +19,7 @@ const { pageUrls } = require('./lib/page-urls.cjs');
 const { buildFragment } = require('./lib/build-fragment.cjs');
 const { linkNodes } = require('./lib/link-nodes.cjs');
 const { placeFragment } = require('./lib/place-fragment.cjs');
+const { OUTPUT_TYPES } = require('./lib/output-types.cjs');
 
 // Marker scheme used for node links in the generated SVG. dependency-cruiser
 // always emits a URL per node (the source path, or nodejs.org / npmjs.com for
@@ -29,6 +30,7 @@ const LINK_PREFIX = 'jsdoc://';
 
 const DEFAULTS = {
 	config: undefined,
+	outputType: 'dot',
 	placement: 'prepend',
 	title: 'Dependency graph',
 	stats: true,
@@ -55,9 +57,16 @@ exports.handlers = {
 		const files = (env.sourceFiles ?? []).map((file) => path.relative(cwd, file).replaceAll('\\', '/'));
 		if (files.length === 0) return;
 
+		if (!OUTPUT_TYPES.includes(conf.outputType)) {
+			logger.error(
+				`dependency-graph: unsupported outputType "${conf.outputType}". Use one of: ${OUTPUT_TYPES.join(', ')}.`,
+			);
+			return;
+		}
+
 		let rendered;
 		try {
-			rendered = renderGraph({ files, cwd, config: conf.config });
+			rendered = renderGraph({ files, cwd, config: conf.config, outputType: conf.outputType });
 		} catch (error) {
 			logger.error(`dependency-graph: could not render the graph.\n${error.stderr || error.message}`);
 			return;
@@ -99,6 +108,7 @@ exports.handlers = {
  * @param {string[]} job.files Source files, relative to `cwd`.
  * @param {string} job.cwd Project root.
  * @param {string} [job.config] Path to a dependency-cruiser config file.
+ * @param {string} [job.outputType] dependency-cruiser reporter that draws the graph.
  * @returns {{svg: string, stats: {modules: number, dependencies: number}, violations: ({report: string}|null)}}
  */
 const renderGraph = (job) => {
