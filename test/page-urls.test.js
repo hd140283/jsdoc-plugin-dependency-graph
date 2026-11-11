@@ -4,7 +4,7 @@ import { pageUrls } from '../lib/page-urls.cjs';
 
 const cwd = path.resolve('/project');
 
-function doclet(file, extra) {
+const doclet = (file, extra) => {
 	return {
 		meta: {
 			path: path.join(cwd, path.dirname(file)),
@@ -12,7 +12,7 @@ function doclet(file, extra) {
 		},
 		...extra,
 	};
-}
+};
 
 describe('pageUrls', () => {
 	it('links @module files to their module page', () => {

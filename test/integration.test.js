@@ -10,7 +10,7 @@ const require = createRequire(import.meta.url);
 const jsdoc = require.resolve('jsdoc/jsdoc.js');
 const fixture = fileURLToPath(new URL('./fixtures/basic/', import.meta.url));
 
-function runJsdoc(config) {
+const runJsdoc = (config) => {
 	const out = fs.mkdtempSync(path.join(os.tmpdir(), 'jsdoc-plugin-dependency-graph-'));
 	execFileSync(process.execPath, [jsdoc, 'src', '-r', '-c', config, '-R', 'README.md', '-d', out], {
 		cwd: fixture,
@@ -18,7 +18,7 @@ function runJsdoc(config) {
 		stdio: ['ignore', 'pipe', 'pipe'],
 	});
 	return fs.readFileSync(path.join(out, 'index.html'), 'utf8');
-}
+};
 
 describe('running jsdoc on a project', { timeout: 60_000 }, () => {
 	it('puts a linked graph in front of the README on the Home page', () => {

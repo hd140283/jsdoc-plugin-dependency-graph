@@ -81,10 +81,11 @@ exports.handlers = {
 
 /**
  * Run lib/render.mjs in a child process and return its result.
+ * @function
  * @param {{files: string[], cwd: string, config?: string}} job
  * @returns {{svg: string, stats: {modules: number, dependencies: number}, violations: ({report: string}|null)}}
  */
-function renderGraph(job) {
+const renderGraph = (job) => {
 	const stdout = execFileSync(process.execPath, [require.resolve('./lib/render.mjs')], {
 		cwd: job.cwd,
 		input: JSON.stringify({ ...job, prefix: LINK_PREFIX }),
@@ -93,4 +94,4 @@ function renderGraph(job) {
 		stdio: ['pipe', 'pipe', 'pipe'],
 	});
 	return JSON.parse(stdout);
-}
+};

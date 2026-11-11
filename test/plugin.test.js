@@ -34,7 +34,7 @@ const sourceFiles = ['src/index.js', 'src/lib/greeting.js', 'src/lib/plain.js', 
 	path.join(fixture, file),
 );
 
-function doclet(file, extra) {
+const doclet = (file, extra) => {
 	return {
 		meta: {
 			path: path.join(fixture, path.dirname(file)),
@@ -42,7 +42,7 @@ function doclet(file, extra) {
 		},
 		...extra,
 	};
-}
+};
 
 const doclets = [
 	doclet('src/index.js', {
@@ -80,11 +80,11 @@ beforeEach(() => {
 	for (const messages of Object.values(logged)) messages.length = 0;
 });
 
-function run(conf) {
+const run = (conf) => {
 	if (conf) env.conf.dependencyGraph = conf;
 	handlers.processingComplete({ doclets });
 	return env.opts.readme;
-}
+};
 
 describe('processingComplete', { timeout: 60_000 }, () => {
 	it('puts a linked graph in front of the README', () => {
