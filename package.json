@@ -15,8 +15,7 @@
 	"type": "module",
 	"main": "./index.cjs",
 	"exports": {
-		".": "./index.cjs",
-		"./render": "./lib/render.mjs"
+		".": "./index.cjs"
 	},
 	"files": [
 		"index.cjs",
