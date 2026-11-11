@@ -49,4 +49,18 @@ describe('running jsdoc on a project', { timeout: 60_000 }, () => {
 		expect(html).toContain('dependency-graph__canvas {');
 		expect(html).not.toContain('contextmenu');
 	});
+
+	it('draws the graph with the reporter named by outputType', () => {
+		const html = runJsdoc('jsdoc.archi.json');
+
+		// src/index.js and the src/lib folder
+		expect(html).toContain('2 modules / 1 dependencies');
+		expect(html).toContain('href="module-app.html"');
+	});
+
+	it('fails the run when outputType is not supported', () => {
+		expect(() => runJsdoc('jsdoc.unsupported.json')).toThrow(
+			'dependency-graph: unsupported outputType "mermaid". Use one of: dot, flat, ddot, archi.',
+		);
+	});
 });

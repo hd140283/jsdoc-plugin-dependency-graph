@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { render } from '../lib/render.mjs';
@@ -138,5 +141,60 @@ describe('render on a project that imports external modules', { timeout: 60_000 
 		expect(stats.modules).toBe(4);
 		expect(svg).toContain('<title>path</title>');
 		expect(svg).toContain('missingpackage');
+	});
+});
+
+describe('render on a project with a .dependency-cruiser config file', { timeout: 60_000 }, () => {
+	const autoconfig = fileURLToPath(new URL('./fixtures/autoconfig/', import.meta.url));
+
+	beforeAll(() => {
+		process.chdir(autoconfig);
+	});
+	afterAll(() => {
+		process.chdir(fixture);
+	});
+
+	it('picks the config up without being told where it is', async () => {
+		const { svg, stats } = await render({ files, cwd: autoconfig });
+
+		expect(stats).toEqual({ modules: 2, dependencies: 1 });
+		// The background colour comes from the theme in .dependency-cruiser.json.
+		expect(svg).toContain('lightyellow');
+	});
+});
+
+describe('render on a large project', { timeout: 120_000 }, () => {
+	// 200 modules is past the size where Graphviz stops routing orthogonal edges.
+	const size = 200;
+	let large;
+
+	beforeAll(() => {
+		large = fs.mkdtempSync(path.join(os.tmpdir(), 'jsdoc-plugin-dependency-graph-large-'));
+		fs.mkdirSync(path.join(large, 'src'));
+		fs.writeFileSync(
+			path.join(large, 'package.json'),
+			JSON.stringify({ name: 'large', private: true, type: 'module' }),
+		);
+		for (let index = 0; index < size; index++) {
+			const imports = [index + 1, index + 2, index + 7]
+				.filter((target) => target < size)
+				.map((target) => `import './m${target}.js';`);
+			fs.writeFileSync(
+				path.join(large, 'src', `m${index}.js`),
+				`${imports.join('\n')}\nexport const m${index} = ${index};\n`,
+			);
+		}
+		process.chdir(large);
+	});
+	afterAll(() => {
+		process.chdir(fixture);
+		fs.rmSync(large, { recursive: true, force: true });
+	});
+
+	it('still draws the graph', async () => {
+		const { svg, stats } = await render({ files: ['src'], cwd: large });
+
+		expect(svg.startsWith('<svg')).toBe(true);
+		expect(stats.modules).toBe(size);
 	});
 });

@@ -1,0 +1,6 @@
+{
+	"plugins": ["../../../index.cjs"],
+	"dependencyGraph": {
+		"outputType": "mermaid"
+	}
+}
