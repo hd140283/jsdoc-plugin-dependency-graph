@@ -10,9 +10,9 @@ const require = createRequire(import.meta.url);
 const jsdoc = require.resolve('jsdoc/jsdoc.js');
 const fixture = fileURLToPath(new URL('./fixtures/basic/', import.meta.url));
 
-const runJsdoc = (config) => {
+const runJsdoc = (config, options = []) => {
 	const out = fs.mkdtempSync(path.join(os.tmpdir(), 'jsdoc-plugin-dependency-graph-'));
-	execFileSync(process.execPath, [jsdoc, 'src', '-r', '-c', config, '-R', 'README.md', '-d', out], {
+	execFileSync(process.execPath, [jsdoc, 'src', '-r', '-c', config, '-R', 'README.md', '-d', out, ...options], {
 		cwd: fixture,
 		encoding: 'utf8',
 		stdio: ['ignore', 'pipe', 'pipe'],
@@ -56,6 +56,16 @@ describe('running jsdoc on a project', { timeout: 60_000 }, () => {
 		// src/index.js and the src/lib folder
 		expect(html).toContain('2 modules / 1 dependencies');
 		expect(html).toContain('href="module-app.html"');
+	});
+
+	it('links only the pages jsdoc publishes under --access', () => {
+		// Nothing in the fixture is tagged @public, so jsdoc publishes no page to link to.
+		const html = runJsdoc('jsdoc.json', ['--access', 'public']);
+
+		expect(html).toContain('4 modules / 3 dependencies');
+		expect(html).not.toContain('href="module-app.html"');
+		expect(html).not.toContain('href="global.html#shout"');
+		expect(html).not.toContain('jsdoc://');
 	});
 
 	it('fails the run when outputType is not supported', () => {

@@ -171,6 +171,64 @@ describe('pageUrls', () => {
 	});
 
 	it.each([
+		['is not given', undefined, false, ['plain', 'open', 'guarded', 'internal']],
+		['is "all"', 'all', false, ['plain', 'open', 'guarded', 'internal', 'secret']],
+		['is "public"', 'public', false, ['open']],
+		['is "undefined"', 'undefined', false, ['plain']],
+		['is "private"', 'private', false, ['secret']],
+		['is "public,undefined"', 'public,undefined', false, ['plain', 'open']],
+		['is "protected,package"', 'protected,package', false, ['guarded', 'internal']],
+		['is given twice', ['public', 'undefined'], false, ['plain', 'open']],
+		['is "public" next to --private', 'public', true, ['open', 'secret']],
+	])('links the doclets JSDoc publishes when --access %s', (_description, access, includePrivate, published) => {
+		const global = (name, extra) =>
+			doclet(`src/${name}.js`, { kind: 'function', longname: name, name, scope: 'global', ...extra });
+		const urls = pageUrls({
+			cwd,
+			access,
+			includePrivate,
+			doclets: [
+				global('plain'),
+				global('open', { access: 'public' }),
+				global('guarded', { access: 'protected' }),
+				global('internal', { access: 'package' }),
+				global('secret', { access: 'private' }),
+			],
+		});
+		expect([...urls.keys()]).toEqual(published.map((name) => `src/${name}.js`));
+	});
+
+	it('links members to the source page when their container is not published', () => {
+		const doclets = [
+			doclet('src/index.js', {
+				kind: 'module',
+				longname: 'module:app',
+				name: 'app',
+			}),
+			doclet('src/index.js', {
+				kind: 'function',
+				longname: 'module:app.main',
+				name: 'main',
+				scope: 'static',
+				memberof: 'module:app',
+				access: 'public',
+			}),
+			doclet('src/lib/extra.js', {
+				kind: 'function',
+				longname: 'module:app.extra',
+				name: 'extra',
+				scope: 'static',
+				memberof: 'module:app',
+				access: 'public',
+			}),
+		];
+		const urls = pageUrls({ cwd, doclets, access: 'public' });
+		expect(urls.get('src/index.js')).toBe('index.js.html');
+		expect(urls.get('src/lib/extra.js')).toBe('lib_extra.js.html');
+		expect(pageUrls({ cwd, doclets, access: 'public', sourcePages: false }).size).toBe(0);
+	});
+
+	it.each([
 		['no directory', undefined],
 		['the string "null" as directory', 'null'],
 	])('takes the file name alone when the doclet has %s', (_description, directory) => {

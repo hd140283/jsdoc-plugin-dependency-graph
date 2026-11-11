@@ -84,6 +84,7 @@ exports.handlers = {
 		const urls = pageUrls({
 			doclets,
 			cwd,
+			access: env.opts.access,
 			includePrivate: Boolean(env.opts.private),
 			sourcePages: env.conf.templates?.default?.outputSourceFiles !== false,
 		});

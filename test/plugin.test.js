@@ -131,6 +131,16 @@ describe('processingComplete', { timeout: 60_000 }, () => {
 		expect(readme).not.toContain(README);
 	});
 
+	it('links only the pages JSDoc publishes under --access', () => {
+		env.opts.access = 'public';
+		const readme = run();
+
+		expect(readme).toContain('4 modules / 3 dependencies');
+		expect(readme).not.toContain('href="module-app.html"');
+		expect(readme).not.toContain('href="global.html#shout"');
+		expect(readme).not.toContain('jsdoc://');
+	});
+
 	it('draws the graph with the reporter named by outputType', () => {
 		const readme = run({ outputType: 'archi' });
 
