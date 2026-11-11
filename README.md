@@ -36,6 +36,7 @@ Put them under `dependencyGraph` in the JSDoc configuration:
 	"plugins": ["node_modules/jsdoc-plugin-dependency-graph"],
 	"dependencyGraph": {
 		"config": ".dependency-cruiser.cjs",
+		"outputType": "dot",
 		"placement": "prepend",
 		"title": "Dependency graph",
 		"stats": true,
@@ -45,19 +46,22 @@ Put them under `dependencyGraph` in the JSDoc configuration:
 }
 ```
 
-| Option            | Default              | Description                                                                                                                                                                                                                                                                                                        |
-| ----------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `config`          | auto                 | dependency-cruiser config file. By default `.dependency-cruiser.{json,js,cjs,mjs}` is looked up in the working directory. Without one, the graph shows only your own modules: packages in `node_modules`, Node.js built-ins and imports that cannot be resolved are left out. Add a config file to draw those too. |
-| `placement`       | `"prepend"`          | Where the graph goes relative to the README: `"prepend"`, `"append"` or `"replace"`.                                                                                                                                                                                                                               |
-| `title`           | `"Dependency graph"` | Heading above the graph. `false` for none.                                                                                                                                                                                                                                                                         |
-| `stats`           | `true`               | Show the module and dependency counts under the heading.                                                                                                                                                                                                                                                           |
-| `hoverHighlight`  | `true`               | Include the small script that highlights neighbours on hover and pins on right-click.                                                                                                                                                                                                                              |
-| `failOnViolation` | `false`              | Report dependency-cruiser rule violations as JSDoc errors (non-zero exit) instead of warnings.                                                                                                                                                                                                                     |
+| Option            | Default              | Description                                                                                                                                                                                                        |
+| ----------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `config`          | auto                 | dependency-cruiser config file. By default `.dependency-cruiser.{json,js,cjs,mjs}` is looked up in the working directory. Without one, the graph shows only your own modules.                                      |
+| `outputType`      | `"dot"`              | dependency-cruiser reporter. `"dot"` draws one node per file, `"flat"` does the same without the folder boxes, `"ddot"` draws one node per folder, and `"archi"` collapses nodes to the level your config defines. |
+| `placement`       | `"prepend"`          | Where the graph goes relative to the README: `"prepend"`, `"append"` or `"replace"`.                                                                                                                               |
+| `title`           | `"Dependency graph"` | Heading above the graph. `false` for none.                                                                                                                                                                         |
+| `stats`           | `true`               | Show the module and dependency counts under the heading.                                                                                                                                                           |
+| `hoverHighlight`  | `true`               | Highlight a node's neighbours on hover, and pin the highlight on right-click.                                                                                                                                      |
+| `failOnViolation` | `false`              | Treat dependency-cruiser rule violations as errors, so that JSDoc exits with a failure.                                                                                                                            |
 
 Everything about the graph itself, such as which files to include, folder
 collapsing, colours and rules, is configured through dependency-cruiser. The
-plugin passes your config straight to it and uses the `dot` reporter, so the
-`reporterOptions.dot` section applies.
+`reporterOptions` of the reporter you picked apply too.
+
+When a graph is too large for right-angled edges, the plugin draws curves
+instead.
 
 ## How nodes are linked
 
@@ -65,34 +69,21 @@ For each source file, the plugin picks the page JSDoc generates for it:
 
 1. the `@module` page, if the file declares one;
 2. otherwise the page of a class, namespace, mixin, interface or external defined in the file;
-3. otherwise the global page, anchored at the global whose name matches the file name (or the first one);
+3. otherwise the global page, anchored at the global named after the file, or at the first global if none is;
 4. otherwise the page of the container a member in the file belongs to;
 5. otherwise the file's own source page.
 
 Files with no documented symbols get no page from JSDoc, so their nodes are
-drawn without a link.
+drawn without a link. The same goes for nodes that stand for a folder, which
+is what `"ddot"`, `"archi"` and a `collapsePattern` draw.
 
-The URLs are computed from JSDoc's naming rules rather than asked from the
-template, because JSDoc's helper de-duplicates file names as a side effect and
-cannot be consulted early without disturbing the template's own output. The one
-case this misses is two symbols whose page names differ only in case.
-
-## How it works
-
-JSDoc's plugin hooks are synchronous and dependency-cruiser is not, so the graph
-is rendered in a child process (`lib/render.mjs`) and handed back as SVG. At
-`processingComplete` the plugin resolves the node links from the doclets and
-inserts the result into `env.opts.readme`, which is what the template prints on
-the Home page.
-
-`lib/render.mjs` does not depend on JSDoc. It can be imported as
-`jsdoc-plugin-dependency-graph/render` to produce the same SVG for other tools.
+When two symbols have page names that differ only in case, the link may point
+to the wrong page.
 
 ## Compatibility
 
-JSDoc 4. Tested with the default template and docdash. Other templates should
-work as long as they render `opts.readme` on the Home page, which all the
-common ones do.
+JSDoc 4. Tested with the default template. Other templates should work as long
+as they render `opts.readme` on the Home page.
 
 ## License
 
