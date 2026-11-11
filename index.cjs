@@ -1,12 +1,15 @@
 'use strict';
 
-// JSDoc plugin entry point.
-//
-// JSDoc fires its plugin events synchronously, while dependency-cruiser and the
-// WASM build of Graphviz are asynchronous. The heavy lifting therefore happens
-// in a child process (lib/render.mjs); this file only wires the result into the
-// Home page by rewriting `env.opts.readme`, which JSDoc has already turned into
-// HTML by the time `processingComplete` fires.
+/**
+ * JSDoc plugin entry point.
+ *
+ * JSDoc fires its plugin events synchronously, while dependency-cruiser and the
+ * WASM build of Graphviz are asynchronous. The heavy lifting therefore happens
+ * in a child process (lib/render.mjs); this file only wires the result into the
+ * Home page by rewriting `env.opts.readme`, which JSDoc has already turned into
+ * HTML by the time `processingComplete` fires.
+ * @module jsdoc-plugin-dependency-graph
+ */
 
 const { execFileSync } = require('node:child_process');
 const path = require('node:path');
@@ -33,7 +36,16 @@ const DEFAULTS = {
 	failOnViolation: false,
 };
 
+/**
+ * Event handlers that JSDoc calls while it runs.
+ * @type {object}
+ */
 exports.handlers = {
+	/**
+	 * Draw the graph and put it on the Home page once every source file is parsed.
+	 * @param {object} event
+	 * @param {object[]} event.doclets Every doclet JSDoc collected.
+	 */
 	processingComplete({ doclets }) {
 		// `jsdoc -X` dumps doclets and never renders a Home page.
 		if (env.opts.explain) return;
@@ -82,7 +94,11 @@ exports.handlers = {
 /**
  * Run lib/render.mjs in a child process and return its result.
  * @function
- * @param {{files: string[], cwd: string, config?: string}} job
+ * @private
+ * @param {object} job
+ * @param {string[]} job.files Source files, relative to `cwd`.
+ * @param {string} job.cwd Project root.
+ * @param {string} [job.config] Path to a dependency-cruiser config file.
  * @returns {{svg: string, stats: {modules: number, dependencies: number}, violations: ({report: string}|null)}}
  */
 const renderGraph = (job) => {
