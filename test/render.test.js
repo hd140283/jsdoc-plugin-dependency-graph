@@ -16,6 +16,24 @@ afterAll(() => {
 	process.chdir(originalCwd);
 });
 
+// Whether every edge is made of horizontal and vertical segments only.
+const hasOrthogonalEdges = (svg) => {
+	return svg
+		.split('class="edge"')
+		.slice(1)
+		.every((edge) => {
+			const points = / d="([^"]*)"/
+				.exec(edge)[1]
+				.replace(/[MC]/g, ' ')
+				.trim()
+				.split(/\s+/)
+				.map((point) => point.split(',').map(Number));
+			return points.every((point, index) => {
+				return index === 0 || point[0] === points[index - 1][0] || point[1] === points[index - 1][1];
+			});
+		});
+};
+
 describe('render', { timeout: 60_000 }, () => {
 	it("draws the project's modules as SVG with counts", async () => {
 		const { svg, stats, violations } = await render({ files, cwd: fixture });
@@ -58,6 +76,14 @@ describe('render', { timeout: 60_000 }, () => {
 		await expect(render({ files, cwd: fixture, config: 'nope.json' })).rejects.toThrow(
 			/dependency-cruiser config not found: .*nope\.json/,
 		);
+	});
+
+	it('draws orthogonal edges by default and leaves the look to a dependency-cruiser config', async () => {
+		const byDefault = await render({ files, cwd: fixture });
+		const configured = await render({ files, cwd: fixture, config: 'dependency-cruiser.strict.json' });
+
+		expect(hasOrthogonalEdges(byDefault.svg)).toBe(true);
+		expect(hasOrthogonalEdges(configured.svg)).toBe(false);
 	});
 
 	it.each([
