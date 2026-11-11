@@ -8,7 +8,7 @@ export default defineConfig({
 		server: { deps: { external: [/\.cjs$/] } },
 		coverage: {
 			provider: 'v8',
-			include: ['index.cjs', 'lib/**'],
+			include: ['index.cjs', 'lib/**', 'assets/**/*.js'],
 			reporter: ['text', 'html', 'lcov'],
 		},
 	},
