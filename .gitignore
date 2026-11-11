@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# Generated
+coverage/
+out/
+*.tgz
+*.log
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,60 @@
+{
+	"name": "jsdoc-plugin-dependency-graph",
+	"version": "0.0.0",
+	"description": "JSDoc plugin that puts a clickable module dependency graph on the Home page",
+	"keywords": [
+		"jsdoc",
+		"jsdoc-plugin",
+		"dependency-graph",
+		"dependency-cruiser",
+		"graphviz",
+		"documentation"
+	],
+	"license": "MIT",
+	"author": "Taiki Watanabe",
+	"type": "module",
+	"main": "./index.cjs",
+	"exports": {
+		".": "./index.cjs",
+		"./render": "./lib/render.mjs"
+	},
+	"files": [
+		"index.cjs",
+		"lib",
+		"assets"
+	],
+	"engines": {
+		"node": ">=22"
+	},
+	"devEngines": {
+		"runtime": {
+			"name": "node",
+			"version": ">=22",
+			"onFail": "error"
+		},
+		"packageManager": {
+			"name": "pnpm",
+			"version": "12",
+			"onFail": "error"
+		}
+	},
+	"scripts": {
+		"lint": "biome check --write",
+		"test": "vitest run",
+		"coverage": "vitest run --coverage"
+	},
+	"peerDependencies": {
+		"jsdoc": "^4.0.0"
+	},
+	"dependencies": {
+		"@viz-js/viz": "^3.31.0",
+		"dependency-cruiser": "^18.7.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.6.4",
+		"@vitest/coverage-v8": "5.1.0",
+		"jsdoc": "^4.0.5",
+		"vitest": "^5.0.5"
+	},
+	"packageManager": "pnpm@12.16.1"
+}
