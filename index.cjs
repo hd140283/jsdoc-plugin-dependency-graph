@@ -13,7 +13,9 @@ const path = require('node:path');
 const env = require('jsdoc/env');
 const logger = require('jsdoc/util/logger');
 const { pageUrls } = require('./lib/page-urls.cjs');
-const { buildFragment, linkNodes, placeFragment } = require('./lib/embed.cjs');
+const { buildFragment } = require('./lib/build-fragment.cjs');
+const { linkNodes } = require('./lib/link-nodes.cjs');
+const { placeFragment } = require('./lib/place-fragment.cjs');
 
 // Marker scheme used for node links in the generated SVG. dependency-cruiser
 // always emits a URL per node (the source path, or nodejs.org / npmjs.com for
