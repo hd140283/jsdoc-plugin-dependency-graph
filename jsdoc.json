@@ -1,0 +1,11 @@
+{
+	"plugins": ["./index.cjs"],
+	"source": {
+		"include": ["index.cjs", "lib"],
+		"includePattern": ".+\\.[cm]?js$"
+	},
+	"opts": {
+		"destination": "docs",
+		"readme": "README.md"
+	}
+}
