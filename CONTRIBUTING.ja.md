@@ -6,7 +6,7 @@
 - コミットは変更の目的ごとに細かく分ける
 - ブランチは main の1本で運用する
 - 外部からの変更は main 宛ての PR で受け付ける
-- リリースは `pnpm version <patch|minor|major> -m "chore: release v%s"` で行う。バージョンを上げたコミットとタグが作られるので、タグも push する
+- リリースは `pnpm version <patch|minor|major> -m "chore: release v%s"` で行い、タグも push する
 - バージョン番号は [Semantic Versioning](https://semver.org) に従う
 
 ## コーディング規約
@@ -33,4 +33,4 @@ JSDoc プラグインの入口である `index.cjs` と、ツールの設定フ�
 - 型・説明は JSDoc で記述し、生成時に警告が出ないことを確認する
 - 型は JSDoc の型式で書き、TypeScript 構文は使わない。任意型は `{*}`、キー・バリューは `{Object.<string, function>}`、関数型は `{function(T): R}`
 - `const`／`export const` に代入したアロー関数には `@function` を付ける。付けないと引数・戻り値の表が生成されない。名前は変数名から推論されるので省略してよい
-- export されないファイル内ローカル関数には `@private` を付ける。公開 API と誤認されないよう、ドキュメントから除外するため。JSDoc はデフォルトで private を出力しない
+- export されないファイル内ローカル関数は公開 API と誤認されないように `@private` を付けてドキュメントから除外する
