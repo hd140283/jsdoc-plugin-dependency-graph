@@ -6,7 +6,7 @@
 - Keep each commit small and focused on one purpose
 - All development happens on a single branch, `main`
 - Contributions are welcome as pull requests against `main`
-- Cut a release with `pnpm version <patch|minor|major> -m "chore: release v%s"`, and remember to push the tag too
+- Cut a release with `pnpm version <patch|minor|major> -m "chore: release v%s"`, and remember to push the tag too. Pushing the tag stages the release on npm, where a maintainer approves it to publish
 - Versions follow [Semantic Versioning](https://semver.org)
 
 ## Coding Conventions
