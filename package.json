@@ -10,6 +10,12 @@
 		"graphviz",
 		"documentation"
 	],
+	"homepage": "https://hd140283.github.io/jsdoc-plugin-dependency-graph/",
+	"bugs": "https://github.com/hd140283/jsdoc-plugin-dependency-graph/issues",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/hd140283/jsdoc-plugin-dependency-graph.git"
+	},
 	"license": "MIT",
 	"author": "Taiki Watanabe",
 	"type": "module",
