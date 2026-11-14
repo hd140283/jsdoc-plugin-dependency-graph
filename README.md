@@ -1,6 +1,6 @@
 # jsdoc-plugin-dependency-graph
 
-English | [日本語](README.ja.md)
+English | [日本語](https://github.com/hd140283/jsdoc-plugin-dependency-graph/blob/main/README.ja.md)
 
 A [JSDoc](https://jsdoc.app/) plugin that draws your project's module dependency
 graph and puts it on the Home page. Every node links to the page that documents
@@ -89,4 +89,4 @@ as they render `opts.readme` on the Home page.
 
 ## License
 
-[MIT](LICENSE)
+[MIT](https://github.com/hd140283/jsdoc-plugin-dependency-graph/blob/main/LICENSE)
