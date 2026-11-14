@@ -1,5 +1,7 @@
 # jsdoc-plugin-dependency-graph
 
+[![CI](https://github.com/hd140283/jsdoc-plugin-dependency-graph/actions/workflows/ci.yml/badge.svg)](https://github.com/hd140283/jsdoc-plugin-dependency-graph/actions/workflows/ci.yml)
+
 [English](README.md) | 日本語
 
 モジュールの依存関係グラフを JSDoc の Home ページに埋め込むプラグインです。ノードをクリックすると、そのファイルのドキュメントページに移動します。ノードにカーソルを合わせるとつながっているノードが強調表示され、右クリックで強調表示を固定できます。

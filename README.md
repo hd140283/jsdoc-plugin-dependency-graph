@@ -1,5 +1,7 @@
 # jsdoc-plugin-dependency-graph
 
+[![CI](https://github.com/hd140283/jsdoc-plugin-dependency-graph/actions/workflows/ci.yml/badge.svg)](https://github.com/hd140283/jsdoc-plugin-dependency-graph/actions/workflows/ci.yml)
+
 English | [日本語](https://github.com/hd140283/jsdoc-plugin-dependency-graph/blob/main/README.ja.md)
 
 A [JSDoc](https://jsdoc.app/) plugin that draws your project's module dependency
