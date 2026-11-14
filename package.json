@@ -1,6 +1,6 @@
 {
 	"name": "jsdoc-plugin-dependency-graph",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "JSDoc plugin that puts a clickable module dependency graph on the Home page",
 	"keywords": [
 		"jsdoc",
