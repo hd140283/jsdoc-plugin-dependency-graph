@@ -6,6 +6,8 @@ A [JSDoc](https://jsdoc.app/) plugin that draws your project's module dependency
 graph and puts it on the Home page. Every node links to the page that documents
 that file. Hover a node to highlight its neighbours; right-click to pin.
 
+See it on [this plugin's own API docs](https://hd140283.github.io/jsdoc-plugin-dependency-graph/).
+
 The graph is produced by [dependency-cruiser](https://github.com/sverweij/dependency-cruiser)
 and rendered with a WebAssembly build of Graphviz, so there is nothing to install
 besides this package.

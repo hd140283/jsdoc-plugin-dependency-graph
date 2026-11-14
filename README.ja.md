@@ -4,6 +4,8 @@
 
 モジュールの依存関係グラフを JSDoc の Home ページに埋め込むプラグインです。ノードをクリックすると、そのファイルのドキュメントページに移動します。ノードにカーソルを合わせるとつながっているノードが強調表示され、右クリックで強調表示を固定できます。
 
+実際の表示は[このプラグイン自身の API ドキュメント](https://hd140283.github.io/jsdoc-plugin-dependency-graph/)で確認できます。
+
 依存関係の解析には [dependency-cruiser](https://github.com/sverweij/dependency-cruiser)、描画には WebAssembly 版の Graphviz を使っているので、Graphviz などを別途インストールする必要はありません。
 
 ## インストール
