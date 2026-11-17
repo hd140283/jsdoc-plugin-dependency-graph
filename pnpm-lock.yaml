@@ -166,9 +166,9 @@ importers:
 
   .:
     dependencies:
-      '@viz-js/viz':
-        specifier: ^3.31.0
-        version: 3.31.0
+      '@hpcc-js/wasm-graphviz':
+        specifier: ^1.30.0
+        version: 1.30.0
       dependency-cruiser:
         specifier: ^18.7.0
         version: 18.7.2
@@ -289,6 +289,9 @@ packages:
     peerDependenciesMeta:
       '@noble/hashes':
         optional: true
+
+  '@hpcc-js/wasm-graphviz@1.30.0':
+    resolution: {integrity: sha512-T20IKosOZuex2qV049fQokVJy2MWv8w9Md5V/4mRKCXDf49fBCR50VD1yBlPYHaQlHPsFGRdqXN//r59vZliWQ==}
 
   '@jridgewell/resolve-uri@3.1.2':
     resolution: {integrity: sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==}
@@ -454,9 +457,6 @@ packages:
 
   '@vitest/spy@5.1.0':
     resolution: {integrity: sha512-2DPO5OMHWKrBngC+fCmTQqemNF0gidRhp3lxbBmRhW+M1XJrfgPpqNqWVevXtn2f2ufD5ZaR1B6B641aAlcX5A==}
-
-  '@viz-js/viz@3.31.0':
-    resolution: {integrity: sha512-r7zlQdRvcwvIpjHGgs+KNWHeE/P5/Dq7k8ZAKaMCbZqomxCBJV78gVuQYaHzFVca+kB0mX0fMW9UFevCOBG50A==}
 
   acorn-jsx-walk@2.0.0:
     resolution: {integrity: sha512-uuo6iJj4D4ygkdzd6jPtcxs8vZgDX9YFIkqczGImoypX2fQ4dVImmu3UzA4ynixCIMTrEOWW+95M2HuBaCEOVA==}
@@ -1126,6 +1126,8 @@ snapshots:
 
   '@exodus/bytes@1.16.0': {}
 
+  '@hpcc-js/wasm-graphviz@1.30.0': {}
+
   '@jridgewell/resolve-uri@3.1.2': {}
 
   '@jridgewell/sourcemap-codec@1.6.0': {}
@@ -1234,8 +1236,6 @@ snapshots:
       vite: 8.3.6
 
   '@vitest/spy@5.1.0': {}
-
-  '@viz-js/viz@3.31.0': {}
 
   acorn-jsx-walk@2.0.0: {}
 

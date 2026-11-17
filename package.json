@@ -52,7 +52,7 @@
 		"jsdoc": "^4.0.0"
 	},
 	"dependencies": {
-		"@viz-js/viz": "^3.31.0",
+		"@hpcc-js/wasm-graphviz": "^1.30.0",
 		"dependency-cruiser": "^18.7.0"
 	},
 	"devDependencies": {

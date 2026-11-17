@@ -164,7 +164,8 @@ describe('render on a project with a .dependency-cruiser config file', { timeout
 });
 
 describe('render on a large project', { timeout: 120_000 }, () => {
-	// 200 modules is past the size where Graphviz stops routing orthogonal edges.
+	// 200 modules with 590 dependencies: far more than the fixtures, and still
+	// within what Graphviz routes orthogonal edges for.
 	const size = 200;
 	let large;
 
@@ -191,10 +192,11 @@ describe('render on a large project', { timeout: 120_000 }, () => {
 		fs.rmSync(large, { recursive: true, force: true });
 	});
 
-	it('still draws the graph', async () => {
+	it('still draws the graph with orthogonal edges', async () => {
 		const { svg, stats } = await render({ files: ['src'], cwd: large });
 
 		expect(svg.startsWith('<svg')).toBe(true);
 		expect(stats.modules).toBe(size);
+		expect(hasOrthogonalEdges(svg)).toBe(true);
 	});
 });

@@ -6,13 +6,16 @@ import { fileURLToPath } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { render } from '../lib/render.mjs';
 
-vi.mock('@viz-js/viz', () => ({
-	instance: async () => ({
-		renderString: (dot) => {
-			if (dot.includes('splines="ortho"')) throw new Error('memory access out of bounds');
-			return '<svg><g class="node"></g></svg>';
-		},
-	}),
+vi.mock('@hpcc-js/wasm-graphviz', () => ({
+	Graphviz: {
+		load: async () => ({
+			dot: (dot) => {
+				if (dot.includes('splines="ortho"')) throw new Error('memory access out of bounds');
+				return '<svg><g class="node"></g></svg>';
+			},
+		}),
+		unload: () => {},
+	},
 }));
 
 const fixture = fileURLToPath(new URL('./fixtures/basic/', import.meta.url));
