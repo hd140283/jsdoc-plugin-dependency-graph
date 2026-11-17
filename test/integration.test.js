@@ -68,6 +68,14 @@ describe('running jsdoc on a project', { timeout: 60_000 }, () => {
 		expect(html).not.toContain('jsdoc://');
 	});
 
+	it('leaves the links to the prefix in a dependency-cruiser config', () => {
+		const html = runJsdoc('jsdoc.prefix.json');
+
+		expect(html).toContain('4 modules / 3 dependencies');
+		expect(html).toContain('href="vscode://file/project/src/index.js"');
+		expect(html).toContain('href="vscode://file/project/src/lib/plain.js"');
+	});
+
 	it('fails the run when outputType is not supported', () => {
 		expect(() => runJsdoc('jsdoc.unsupported.json')).toThrow(
 			'dependency-graph: unsupported outputType "mermaid". Use one of: dot, flat, ddot, archi.',

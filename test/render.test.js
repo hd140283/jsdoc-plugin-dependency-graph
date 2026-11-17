@@ -50,16 +50,31 @@ describe('render', { timeout: 60_000 }, () => {
 	});
 
 	it('prefixes node links so they can be rewritten later', async () => {
-		const { svg } = await render({ files, cwd: fixture, prefix: 'jsdoc://' });
+		const { svg, prefix } = await render({ files, cwd: fixture, prefix: 'jsdoc://' });
 
+		expect(prefix).toBe('jsdoc://');
 		expect(svg).toContain('href="jsdoc://src/index.js"');
 		expect(svg).toContain('href="jsdoc://src/lib/greeting.js"');
 	});
 
 	it('links nodes to the bare source path without a prefix', async () => {
-		const { svg } = await render({ files, cwd: fixture });
+		const { svg, prefix } = await render({ files, cwd: fixture });
 
+		expect(prefix).toBe('');
 		expect(svg).toContain('href="src/index.js"');
+	});
+
+	it('lets the prefix in a dependency-cruiser config win', async () => {
+		const { svg, prefix } = await render({
+			files,
+			cwd: fixture,
+			config: 'dependency-cruiser.prefix.json',
+			prefix: 'jsdoc://',
+		});
+
+		expect(prefix).toBe('vscode://file/project/');
+		expect(svg).toContain('href="vscode://file/project/src/index.js"');
+		expect(svg).not.toContain('jsdoc://');
 	});
 
 	it('reports rule violations from a dependency-cruiser config', async () => {

@@ -141,6 +141,20 @@ describe('processingComplete', { timeout: 60_000 }, () => {
 		expect(readme).not.toContain('jsdoc://');
 	});
 
+	it('leaves the links to the prefix in a dependency-cruiser config', () => {
+		const readme = run({ config: 'dependency-cruiser.prefix.json' });
+
+		expect(readme).toContain('href="vscode://file/project/src/index.js"');
+		expect(readme).toContain('href="vscode://file/project/src/lib/plain.js"');
+		expect(readme).not.toContain('href="module-app.html"');
+		expect(logged.info).toEqual([
+			'dependency-graph: nodes link to the prefix in the dependency-cruiser config ("vscode://file/project/") instead of the generated pages',
+			'dependency-graph: 4 modules, 3 dependencies',
+		]);
+		expect(logged.warn).toEqual([]);
+		expect(logged.error).toEqual([]);
+	});
+
 	it('draws the graph with the reporter named by outputType', () => {
 		const readme = run({ outputType: 'archi' });
 

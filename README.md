@@ -84,6 +84,10 @@ is what `"ddot"`, `"archi"` and a `collapsePattern` draw.
 When two symbols have page names that differ only in case, the link may point
 to the wrong page.
 
+If your dependency-cruiser config sets a `prefix`, every node links to that
+prefix followed by the source path, just as in dependency-cruiser's own
+output, rather than to a page in the docs.
+
 ## Compatibility
 
 JSDoc 4. Tested with the default template. Other templates should work as long

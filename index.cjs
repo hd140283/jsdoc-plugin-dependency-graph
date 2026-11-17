@@ -25,7 +25,9 @@ const { OUTPUT_TYPES } = require('./lib/output-types.cjs');
 // always emits a URL per node (the source path, or nodejs.org / npmjs.com for
 // external modules); the prefix tags the ones we are supposed to rewrite. A
 // prefix containing "://" is concatenated verbatim instead of being path-joined
-// (which would produce backslashes on Windows).
+// (which would produce backslashes on Windows). A prefix in the
+// dependency-cruiser config takes the marker's place, and the links are then
+// left as dependency-cruiser drew them.
 const LINK_PREFIX = 'jsdoc://';
 
 const DEFAULTS = {
@@ -81,14 +83,21 @@ exports.handlers = {
 			}
 		}
 
-		const urls = pageUrls({
-			doclets,
-			cwd,
-			access: env.opts.access,
-			includePrivate: Boolean(env.opts.private),
-			sourcePages: env.conf.templates?.default?.outputSourceFiles !== false,
-		});
-		const svg = linkNodes(rendered.svg, LINK_PREFIX, urls);
+		let svg = rendered.svg;
+		if (rendered.prefix === LINK_PREFIX) {
+			const urls = pageUrls({
+				doclets,
+				cwd,
+				access: env.opts.access,
+				includePrivate: Boolean(env.opts.private),
+				sourcePages: env.conf.templates?.default?.outputSourceFiles !== false,
+			});
+			svg = linkNodes(svg, LINK_PREFIX, urls);
+		} else {
+			logger.info(
+				`dependency-graph: nodes link to the prefix in the dependency-cruiser config ("${rendered.prefix}") instead of the generated pages`,
+			);
+		}
 		const fragment = buildFragment({
 			svg,
 			title: conf.title,
@@ -110,7 +119,7 @@ exports.handlers = {
  * @param {string} job.cwd Project root.
  * @param {string} [job.config] Path to a dependency-cruiser config file.
  * @param {string} [job.outputType] dependency-cruiser reporter that draws the graph.
- * @returns {{svg: string, stats: {modules: number, dependencies: number}, violations: ({report: string}|null)}}
+ * @returns {{svg: string, prefix: string, stats: {modules: number, dependencies: number}, violations: ({report: string}|null)}}
  */
 const renderGraph = (job) => {
 	const stdout = execFileSync(process.execPath, [require.resolve('./lib/render.mjs')], {
