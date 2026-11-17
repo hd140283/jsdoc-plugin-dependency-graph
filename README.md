@@ -6,9 +6,9 @@ English | [日本語](https://github.com/hd140283/jsdoc-plugin-dependency-graph/
 
 A [JSDoc](https://jsdoc.app/) plugin that draws your project's module dependency
 graph and puts it on the Home page. Every node links to the page that documents
-that file. Hover a node to highlight its neighbours; right-click to pin.
+that file. Hover over a node to highlight its neighbours; right-click to pin.
 
-See it on [this plugin's own API docs](https://hd140283.github.io/jsdoc-plugin-dependency-graph/).
+See it in action in [this plugin's own API docs](https://hd140283.github.io/jsdoc-plugin-dependency-graph/).
 
 The graph is produced by [dependency-cruiser](https://github.com/sverweij/dependency-cruiser)
 and rendered with a WebAssembly build of Graphviz, so there is nothing to install
@@ -50,15 +50,15 @@ Put them under `dependencyGraph` in the JSDoc configuration:
 }
 ```
 
-| Option            | Default              | Description                                                                                                                                                                   |
-| ----------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `config`          | auto                 | dependency-cruiser config file. By default `.dependency-cruiser.{json,js,cjs,mjs}` is looked up in the working directory. Without one, the graph shows only your own modules. |
-| `outputType`      | `"dot"`              | Which dependency-cruiser reporter draws the graph: `"dot"`, `"flat"`, `"ddot"` or `"archi"`.                                                                                  |
-| `placement`       | `"prepend"`          | Where the graph goes relative to the README: `"prepend"`, `"append"` or `"replace"`.                                                                                          |
-| `title`           | `"Dependency graph"` | Heading above the graph. `false` for none.                                                                                                                                    |
-| `stats`           | `true`               | Show the module and dependency counts under the heading.                                                                                                                      |
-| `hoverHighlight`  | `true`               | Highlight a node's neighbours on hover, and pin the highlight on right-click.                                                                                                 |
-| `failOnViolation` | `false`              | Treat dependency-cruiser rule violations as errors, so that JSDoc exits with a failure.                                                                                       |
+| Option            | Default              | Description                                                                                                                                                                            |
+| ----------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `config`          | auto                 | dependency-cruiser config file. By default, the plugin looks for `.dependency-cruiser.{json,js,cjs,mjs}` in the working directory. Without one, the graph shows only your own modules. |
+| `outputType`      | `"dot"`              | Which dependency-cruiser reporter draws the graph: `"dot"`, `"flat"`, `"ddot"` or `"archi"`.                                                                                           |
+| `placement`       | `"prepend"`          | Where the graph goes relative to the README: `"prepend"`, `"append"` or `"replace"`.                                                                                                   |
+| `title`           | `"Dependency graph"` | Heading above the graph. `false` for none.                                                                                                                                             |
+| `stats`           | `true`               | Show the module and dependency counts under the heading.                                                                                                                               |
+| `hoverHighlight`  | `true`               | Highlight a node's neighbours on hover, and pin the highlight on right-click.                                                                                                          |
+| `failOnViolation` | `false`              | Treat dependency-cruiser rule violations as errors, so that JSDoc exits with a failure.                                                                                                |
 
 Everything about the graph itself, such as which files to include, folder
 collapsing, colours and rules, is configured through dependency-cruiser. The
