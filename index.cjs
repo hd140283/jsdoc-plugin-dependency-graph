@@ -140,7 +140,7 @@ exports.handlers = {
  * @param {string[]} job.files Source files, relative to `cwd`.
  * @param {string} job.cwd Project root.
  * @param {string} [job.config] Path to a dependency-cruiser config file.
- * @param {string} [job.outputType] dependency-cruiser reporter that draws the graph.
+ * @param {string} job.outputType dependency-cruiser reporter that draws the graph.
  * @param {boolean} [job.coreModules] Whether Node.js built-ins stay in the graph.
  * @param {boolean} [job.unresolvableModules] Whether unresolvable imports stay in the graph.
  * @returns {{svg: string, prefix: string, stats: {modules: number, dependencies: number}, violations: ({report: string}|null)}}

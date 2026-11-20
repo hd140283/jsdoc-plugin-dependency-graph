@@ -52,16 +52,21 @@ describe('render when Graphviz cannot route orthogonal edges', { timeout: 60_000
 	);
 
 	it('falls back to curves with a dependency-cruiser config that leaves the edges alone', async () => {
-		const { svg } = await render({ files, cwd: fixture, config: 'dependency-cruiser.strict.json' });
+		const { svg } = await render({
+			files,
+			cwd: fixture,
+			config: 'dependency-cruiser.strict.json',
+			outputType: 'dot',
+		});
 
 		expect(svg).toBe('<svg><g class="node"></g></svg>');
 		expect(programs).toHaveLength(2);
 	});
 
 	it('reports the failure when a dependency-cruiser config asked for them', async () => {
-		await expect(render({ files, cwd: fixture, config: 'dependency-cruiser.ortho.json' })).rejects.toThrow(
-			'memory access out of bounds',
-		);
+		await expect(
+			render({ files, cwd: fixture, config: 'dependency-cruiser.ortho.json', outputType: 'dot' }),
+		).rejects.toThrow('memory access out of bounds');
 		expect(programs).toHaveLength(1);
 	});
 });

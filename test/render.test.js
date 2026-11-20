@@ -39,7 +39,7 @@ const hasOrthogonalEdges = (svg) => {
 
 describe('render', { timeout: 60_000 }, () => {
 	it("draws the project's modules as SVG with counts", async () => {
-		const { svg, stats, violations } = await render({ files, cwd: fixture });
+		const { svg, stats, violations } = await render({ files, cwd: fixture, outputType: 'dot' });
 
 		expect(svg.startsWith('<svg')).toBe(true);
 		expect(svg).not.toContain('<?xml');
@@ -50,7 +50,7 @@ describe('render', { timeout: 60_000 }, () => {
 	});
 
 	it('prefixes node links so they can be rewritten later', async () => {
-		const { svg, prefix } = await render({ files, cwd: fixture, prefix: 'jsdoc://' });
+		const { svg, prefix } = await render({ files, cwd: fixture, prefix: 'jsdoc://', outputType: 'dot' });
 
 		expect(prefix).toBe('jsdoc://');
 		expect(svg).toContain('href="jsdoc://src/index.js"');
@@ -58,7 +58,7 @@ describe('render', { timeout: 60_000 }, () => {
 	});
 
 	it('links nodes to the bare source path without a prefix', async () => {
-		const { svg, prefix } = await render({ files, cwd: fixture });
+		const { svg, prefix } = await render({ files, cwd: fixture, outputType: 'dot' });
 
 		expect(prefix).toBe('');
 		expect(svg).toContain('href="src/index.js"');
@@ -70,6 +70,7 @@ describe('render', { timeout: 60_000 }, () => {
 			cwd: fixture,
 			config: 'dependency-cruiser.prefix.json',
 			prefix: 'jsdoc://',
+			outputType: 'dot',
 		});
 
 		expect(prefix).toBe('vscode://file/project/');
@@ -82,6 +83,7 @@ describe('render', { timeout: 60_000 }, () => {
 			files,
 			cwd: fixture,
 			config: 'dependency-cruiser.strict.json',
+			outputType: 'dot',
 		});
 
 		expect(stats.modules).toBe(4);
@@ -91,15 +93,20 @@ describe('render', { timeout: 60_000 }, () => {
 	});
 
 	it('fails on a missing config file', async () => {
-		await expect(render({ files, cwd: fixture, config: 'nope.json' })).rejects.toThrow(
+		await expect(render({ files, cwd: fixture, config: 'nope.json', outputType: 'dot' })).rejects.toThrow(
 			/dependency-cruiser config not found: .*nope\.json/,
 		);
 	});
 
 	it('draws orthogonal edges unless a dependency-cruiser config sets the edges', async () => {
-		const byDefault = await render({ files, cwd: fixture });
-		const untouched = await render({ files, cwd: fixture, config: 'dependency-cruiser.strict.json' });
-		const curved = await render({ files, cwd: fixture, config: 'dependency-cruiser.curved.json' });
+		const byDefault = await render({ files, cwd: fixture, outputType: 'dot' });
+		const untouched = await render({
+			files,
+			cwd: fixture,
+			config: 'dependency-cruiser.strict.json',
+			outputType: 'dot',
+		});
+		const curved = await render({ files, cwd: fixture, config: 'dependency-cruiser.curved.json', outputType: 'dot' });
 
 		expect(hasOrthogonalEdges(byDefault.svg)).toBe(true);
 		expect(hasOrthogonalEdges(untouched.svg)).toBe(true);
@@ -143,7 +150,7 @@ describe('render on a project that imports external modules', { timeout: 60_000 
 	});
 
 	it('leaves built-ins and unresolvable imports out by default', async () => {
-		const { svg, stats } = await render({ files, cwd: externals });
+		const { svg, stats } = await render({ files, cwd: externals, outputType: 'dot' });
 
 		// index.js, local.js
 		expect(stats).toEqual({ modules: 2, dependencies: 1 });
@@ -153,7 +160,12 @@ describe('render on a project that imports external modules', { timeout: 60_000 
 	});
 
 	it('leaves them out with a dependency-cruiser config too', async () => {
-		const { svg, stats } = await render({ files, cwd: externals, config: 'dependency-cruiser.json' });
+		const { svg, stats } = await render({
+			files,
+			cwd: externals,
+			config: 'dependency-cruiser.json',
+			outputType: 'dot',
+		});
 
 		expect(stats).toEqual({ modules: 2, dependencies: 1 });
 		expect(svg).not.toContain('<title>path</title>');
@@ -161,7 +173,7 @@ describe('render on a project that imports external modules', { timeout: 60_000 
 	});
 
 	it('keeps the built-ins with coreModules', async () => {
-		const { svg, stats } = await render({ files, cwd: externals, coreModules: true });
+		const { svg, stats } = await render({ files, cwd: externals, outputType: 'dot', coreModules: true });
 
 		expect(stats).toEqual({ modules: 3, dependencies: 2 });
 		expect(svg).toContain('<title>path</title>');
@@ -169,7 +181,7 @@ describe('render on a project that imports external modules', { timeout: 60_000 
 	});
 
 	it('keeps the unresolvable imports with unresolvableModules', async () => {
-		const { svg, stats } = await render({ files, cwd: externals, unresolvableModules: true });
+		const { svg, stats } = await render({ files, cwd: externals, outputType: 'dot', unresolvableModules: true });
 
 		expect(stats).toEqual({ modules: 3, dependencies: 2 });
 		expect(svg).not.toContain('<title>path</title>');
@@ -188,7 +200,7 @@ describe('render on a project with a .dependency-cruiser config file', { timeout
 	});
 
 	it('picks the config up without being told where it is', async () => {
-		const { svg, stats } = await render({ files, cwd: autoconfig });
+		const { svg, stats } = await render({ files, cwd: autoconfig, outputType: 'dot' });
 
 		expect(stats).toEqual({ modules: 2, dependencies: 1 });
 		// The background colour comes from the theme in .dependency-cruiser.json.
@@ -244,21 +256,21 @@ describe('render on a project that depends on a package', { timeout: 60_000 }, (
 		['with a dependency-cruiser config that has rules', 'rules.json'],
 		['with a dependency-cruiser config that has an exclude of its own', 'exclude.json'],
 	])('leaves the package out %s', async (_description, config) => {
-		const { svg, stats } = await render({ files, cwd: project, config });
+		const { svg, stats } = await render({ files, cwd: project, config, outputType: 'dot' });
 
 		expect(stats).toEqual({ modules: 1, dependencies: 0 });
 		expect(svg).not.toContain('node_modules');
 	});
 
 	it('still checks the rules against the package it leaves out', async () => {
-		const { violations } = await render({ files, cwd: project, config: 'rules.json' });
+		const { violations } = await render({ files, cwd: project, config: 'rules.json', outputType: 'dot' });
 
 		expect(violations.report).toContain('no-dep');
 		expect(violations.report).not.toContain('no-orphans');
 	});
 
 	it('draws the package when the dependency-cruiser config empties the filter', async () => {
-		const { svg, stats } = await render({ files, cwd: project, config: 'packages.json' });
+		const { svg, stats } = await render({ files, cwd: project, config: 'packages.json', outputType: 'dot' });
 
 		expect(stats).toEqual({ modules: 2, dependencies: 1 });
 		expect(svg).toContain('node_modules/dep/index.js');
@@ -295,7 +307,7 @@ describe('render on a large project', { timeout: 120_000 }, () => {
 	});
 
 	it('still draws the graph with orthogonal edges', async () => {
-		const { svg, stats } = await render({ files: ['src'], cwd: large });
+		const { svg, stats } = await render({ files: ['src'], cwd: large, outputType: 'dot' });
 
 		expect(svg.startsWith('<svg')).toBe(true);
 		expect(stats.modules).toBe(size);
