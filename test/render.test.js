@@ -96,12 +96,14 @@ describe('render', { timeout: 60_000 }, () => {
 		);
 	});
 
-	it('draws orthogonal edges by default and leaves the look to a dependency-cruiser config', async () => {
+	it('draws orthogonal edges unless a dependency-cruiser config sets the edges', async () => {
 		const byDefault = await render({ files, cwd: fixture });
-		const configured = await render({ files, cwd: fixture, config: 'dependency-cruiser.strict.json' });
+		const untouched = await render({ files, cwd: fixture, config: 'dependency-cruiser.strict.json' });
+		const curved = await render({ files, cwd: fixture, config: 'dependency-cruiser.curved.json' });
 
 		expect(hasOrthogonalEdges(byDefault.svg)).toBe(true);
-		expect(hasOrthogonalEdges(configured.svg)).toBe(false);
+		expect(hasOrthogonalEdges(untouched.svg)).toBe(true);
+		expect(hasOrthogonalEdges(curved.svg)).toBe(false);
 	});
 
 	it.each([
@@ -191,6 +193,55 @@ describe('render on a project with a .dependency-cruiser config file', { timeout
 		expect(stats).toEqual({ modules: 2, dependencies: 1 });
 		// The background colour comes from the theme in .dependency-cruiser.json.
 		expect(svg).toContain('lightyellow');
+	});
+
+	it.each(['flat', 'ddot', 'archi'])('draws outputType %s with the dot theme in the config', async (outputType) => {
+		const { svg } = await render({ files, cwd: autoconfig, outputType });
+
+		expect(svg).toContain('lightyellow');
+	});
+});
+
+describe('render on a project that depends on a package', { timeout: 60_000 }, () => {
+	let project;
+
+	beforeAll(() => {
+		project = fs.mkdtempSync(path.join(os.tmpdir(), 'jsdoc-plugin-dependency-graph-package-'));
+		const write = (file, content) => {
+			fs.mkdirSync(path.dirname(path.join(project, file)), { recursive: true });
+			fs.writeFileSync(path.join(project, file), content);
+		};
+		write(
+			'package.json',
+			JSON.stringify({ name: 'app', private: true, type: 'module', dependencies: { dep: '1.0.0' } }),
+		);
+		write('src/index.js', "import 'dep';\n");
+		write('node_modules/dep/package.json', JSON.stringify({ name: 'dep', version: '1.0.0', main: 'index.js' }));
+		write('node_modules/dep/index.js', 'module.exports = 1;\n');
+		write('rules.json', JSON.stringify({ options: { maxDepth: 5 } }));
+		write('packages.json', JSON.stringify({ options: { exclude: { path: '' } } }));
+		process.chdir(project);
+	});
+	afterAll(() => {
+		process.chdir(fixture);
+		fs.rmSync(project, { recursive: true, force: true });
+	});
+
+	it.each([
+		['without a dependency-cruiser config', undefined],
+		['with a dependency-cruiser config that leaves exclude alone', 'rules.json'],
+	])('leaves the package out %s', async (_description, config) => {
+		const { svg, stats } = await render({ files, cwd: project, config });
+
+		expect(stats).toEqual({ modules: 1, dependencies: 0 });
+		expect(svg).not.toContain('node_modules');
+	});
+
+	it('draws the package when the dependency-cruiser config empties exclude', async () => {
+		const { svg, stats } = await render({ files, cwd: project, config: 'packages.json' });
+
+		expect(stats).toEqual({ modules: 2, dependencies: 1 });
+		expect(svg).toContain('node_modules/dep/index.js');
 	});
 });
 

@@ -1,0 +1,7 @@
+{
+	"options": {
+		"reporterOptions": {
+			"dot": { "theme": { "graph": { "splines": "true" } } }
+		}
+	}
+}

@@ -52,24 +52,43 @@ Put them under `dependencyGraph` in the JSDoc configuration:
 }
 ```
 
-| Option                | Default              | Description                                                                                                                                                                            |
-| --------------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `config`              | auto                 | dependency-cruiser config file. By default, the plugin looks for `.dependency-cruiser.{json,js,cjs,mjs}` in the working directory. Without one, the graph shows only your own modules. |
-| `outputType`          | `"dot"`              | Which dependency-cruiser reporter draws the graph: `"dot"`, `"flat"`, `"ddot"` or `"archi"`.                                                                                           |
-| `placement`           | `"prepend"`          | Where the graph goes relative to the README: `"prepend"`, `"append"` or `"replace"`.                                                                                                   |
-| `title`               | `"Dependency graph"` | Heading above the graph. `false` for none.                                                                                                                                             |
-| `stats`               | `true`               | Show the module and dependency counts under the heading.                                                                                                                               |
-| `hoverHighlight`      | `true`               | Highlight a node's neighbours on hover, and pin the highlight on right-click.                                                                                                          |
-| `failOnViolation`     | `false`              | Treat dependency-cruiser rule violations as errors, so that JSDoc exits with a failure.                                                                                                |
-| `coreModules`         | `false`              | Keep Node.js built-in modules in the graph.                                                                                                                                            |
-| `unresolvableModules` | `false`              | Keep the imports dependency-cruiser could not resolve in the graph.                                                                                                                    |
+| Option                | Default              | Description                                                                                                                        |
+| --------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `config`              | auto                 | dependency-cruiser config file. By default, the plugin looks for `.dependency-cruiser.{json,js,cjs,mjs}` in the working directory. |
+| `outputType`          | `"dot"`              | Which dependency-cruiser reporter draws the graph: `"dot"`, `"flat"`, `"ddot"` or `"archi"`.                                       |
+| `placement`           | `"prepend"`          | Where the graph goes relative to the README: `"prepend"`, `"append"` or `"replace"`.                                               |
+| `title`               | `"Dependency graph"` | Heading above the graph. `false` for none.                                                                                         |
+| `stats`               | `true`               | Show the module and dependency counts under the heading.                                                                           |
+| `hoverHighlight`      | `true`               | Highlight a node's neighbours on hover, and pin the highlight on right-click.                                                      |
+| `failOnViolation`     | `false`              | Treat dependency-cruiser rule violations as errors, so that JSDoc exits with a failure.                                            |
+| `coreModules`         | `false`              | Keep Node.js built-in modules in the graph.                                                                                        |
+| `unresolvableModules` | `false`              | Keep the imports dependency-cruiser could not resolve in the graph.                                                                |
 
 Everything about the graph itself, such as which files to include, folder
 collapsing, colours and rules, is configured through dependency-cruiser. The
 `reporterOptions` of the reporter you picked apply too.
 
-When a graph is too large for right-angled edges, the plugin draws curves
-instead.
+The plugin starts from the dependency-cruiser options below and merges your
+config over them, so whatever you set yourself wins:
+
+```json
+{
+	"options": {
+		"doNotFollow": { "path": "node_modules" },
+		"exclude": { "path": "node_modules" },
+		"reporterOptions": {
+			"dot": { "theme": { "graph": { "splines": "ortho" } } }
+		}
+	}
+}
+```
+
+Because of this `exclude`, rules about the packages in `node_modules` never
+fire. To bring the packages back, set `"exclude": { "path": "" }` in your
+config.
+
+When a graph is too large for the default right-angled edges, the plugin draws
+curves instead.
 
 Even with `coreModules` or `unresolvableModules` set to `true`, whatever your
 dependency-cruiser config filters out stays out. Turn them on when a `focus`

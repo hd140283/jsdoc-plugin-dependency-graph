@@ -47,21 +47,37 @@ JSDoc の設定ファイルの `plugins` に追加します。
 }
 ```
 
-| オプション            | 既定値               | 説明                                                                                                                                                                                                   |
-| --------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `config`              | 自動検出             | dependency-cruiser の設定ファイルのパス。省略すると、カレントディレクトリの `.dependency-cruiser.{json,js,cjs,mjs}` を探します。設定ファイルがない場合は、プロジェクト内のモジュールだけを描画します。 |
-| `outputType`          | `"dot"`              | グラフを描く dependency-cruiser のレポーター。`"dot"`、`"flat"`、`"ddot"`、`"archi"` から選びます。                                                                                                    |
-| `placement`           | `"prepend"`          | グラフを挿入する位置。`"prepend"` は README の前、`"append"` は README の後ろ、`"replace"` は README の代わりに表示します。                                                                            |
-| `title`               | `"Dependency graph"` | グラフの見出し。`false` にすると見出しを表示しません。                                                                                                                                                 |
-| `stats`               | `true`               | 見出しの下にモジュール数と依存関係の数を表示するかどうか。                                                                                                                                             |
-| `hoverHighlight`      | `true`               | ホバー時の強調表示と右クリックでの固定を有効にするかどうか。                                                                                                                                           |
-| `failOnViolation`     | `false`              | `true` にすると、dependency-cruiser のルール違反をエラーとして扱い、JSDoc をエラー終了させます。                                                                                                       |
-| `coreModules`         | `false`              | Node.js の組み込みモジュールをグラフに残すかどうか。                                                                                                                                                   |
-| `unresolvableModules` | `false`              | dependency-cruiser が解決できなかった import をグラフに残すかどうか。                                                                                                                                  |
+| オプション            | 既定値               | 説明                                                                                                                             |
+| --------------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `config`              | 自動検出             | dependency-cruiser の設定ファイルのパス。省略すると、カレントディレクトリの `.dependency-cruiser.{json,js,cjs,mjs}` を探します。 |
+| `outputType`          | `"dot"`              | グラフを描く dependency-cruiser のレポーター。`"dot"`、`"flat"`、`"ddot"`、`"archi"` から選びます。                              |
+| `placement`           | `"prepend"`          | グラフを挿入する位置。`"prepend"` は README の前、`"append"` は README の後ろ、`"replace"` は README の代わりに表示します。      |
+| `title`               | `"Dependency graph"` | グラフの見出し。`false` にすると見出しを表示しません。                                                                           |
+| `stats`               | `true`               | 見出しの下にモジュール数と依存関係の数を表示するかどうか。                                                                       |
+| `hoverHighlight`      | `true`               | ホバー時の強調表示と右クリックでの固定を有効にするかどうか。                                                                     |
+| `failOnViolation`     | `false`              | `true` にすると、dependency-cruiser のルール違反をエラーとして扱い、JSDoc をエラー終了させます。                                 |
+| `coreModules`         | `false`              | Node.js の組み込みモジュールをグラフに残すかどうか。                                                                             |
+| `unresolvableModules` | `false`              | dependency-cruiser が解決できなかった import をグラフに残すかどうか。                                                            |
 
 対象ファイルの絞り込み、フォルダ単位の折りたたみ、配色、ルールといったグラフ自体の設定は、すべて dependency-cruiser の設定ファイルで行います。選んだレポーターの `reporterOptions` も反映されます。
 
-グラフが大きすぎて矢印を直角に曲げて描けないときは、曲線で描画します。
+プラグインは次のオプションを既定値とし、設定ファイルに書いた値で上書きします。
+
+```json
+{
+	"options": {
+		"doNotFollow": { "path": "node_modules" },
+		"exclude": { "path": "node_modules" },
+		"reporterOptions": {
+			"dot": { "theme": { "graph": { "splines": "ortho" } } }
+		}
+	}
+}
+```
+
+この `exclude` があるので、`node_modules` のパッケージに関するルールは働きません。パッケージも対象にするには、設定ファイルで `"exclude": { "path": "" }` を指定してください。
+
+グラフが大きすぎて既定の直角の矢印で描けないときは、曲線で描画します。
 
 `coreModules` と `unresolvableModules` を `true` にしても、dependency-cruiser の設定で絞り込まれたものは表示されません。`focus` や `reaches` で組み込みモジュールや解決できなかった import を指定するときは、対応するオプションを `true` にしてください。
 
