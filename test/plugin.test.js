@@ -42,6 +42,7 @@ afterAll(() => {
 const { handlers } = require('../index.cjs');
 
 const fixture = fileURLToPath(new URL('./fixtures/basic/', import.meta.url));
+const externals = fileURLToPath(new URL('./fixtures/externals/', import.meta.url));
 const sourceFiles = ['src/index.js', 'src/lib/greeting.js', 'src/lib/plain.js', 'src/lib/shout.js'].map((file) =>
 	path.join(fixture, file),
 );
@@ -160,6 +161,23 @@ describe('processingComplete', { timeout: 60_000 }, () => {
 
 		// src/index.js and the src/lib folder
 		expect(readme).toContain('2 modules / 1 dependencies');
+		expect(logged.error).toEqual([]);
+	});
+
+	it.each([
+		['leaves built-ins and unresolvable imports out', undefined, '2 modules, 1 dependencies'],
+		['keeps the built-ins with coreModules', { coreModules: true }, '3 modules, 2 dependencies'],
+		[
+			'keeps the unresolvable imports with unresolvableModules',
+			{ unresolvableModules: true },
+			'3 modules, 2 dependencies',
+		],
+	])('%s', (_description, conf, counts) => {
+		env.pwd = externals;
+		env.sourceFiles = [path.join(externals, 'src', 'index.js'), path.join(externals, 'src', 'local.js')];
+		run(conf);
+
+		expect(logged.info).toEqual([`dependency-graph: ${counts}`]);
 		expect(logged.error).toEqual([]);
 	});
 

@@ -150,11 +150,27 @@ describe('render on a project that imports external modules', { timeout: 60_000 
 		expect(svg).not.toContain('missingpackage');
 	});
 
-	it('draws them when a dependency-cruiser config is given', async () => {
+	it('leaves them out with a dependency-cruiser config too', async () => {
 		const { svg, stats } = await render({ files, cwd: externals, config: 'dependency-cruiser.json' });
 
-		expect(stats.modules).toBe(4);
+		expect(stats).toEqual({ modules: 2, dependencies: 1 });
+		expect(svg).not.toContain('<title>path</title>');
+		expect(svg).not.toContain('missingpackage');
+	});
+
+	it('keeps the built-ins with coreModules', async () => {
+		const { svg, stats } = await render({ files, cwd: externals, coreModules: true });
+
+		expect(stats).toEqual({ modules: 3, dependencies: 2 });
 		expect(svg).toContain('<title>path</title>');
+		expect(svg).not.toContain('missingpackage');
+	});
+
+	it('keeps the unresolvable imports with unresolvableModules', async () => {
+		const { svg, stats } = await render({ files, cwd: externals, unresolvableModules: true });
+
+		expect(stats).toEqual({ modules: 3, dependencies: 2 });
+		expect(svg).not.toContain('<title>path</title>');
 		expect(svg).toContain('missingpackage');
 	});
 });
