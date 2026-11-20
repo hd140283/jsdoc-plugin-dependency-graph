@@ -10,6 +10,7 @@ export default defineConfig({
 			provider: 'v8',
 			include: ['index.cjs', 'lib/**', 'assets/**/*.js'],
 			reporter: ['text', 'html', 'lcov'],
+			thresholds: { 100: true },
 		},
 	},
 });
