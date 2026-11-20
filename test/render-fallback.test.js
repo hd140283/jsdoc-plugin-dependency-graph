@@ -41,7 +41,7 @@ describe('render when Graphviz cannot route orthogonal edges', { timeout: 60_000
 	it.each(['dot', 'flat', 'ddot', 'archi'])(
 		'falls back to curves for the default look of outputType %s',
 		async (outputType) => {
-			const { svg, stats } = await render({ files, cwd: fixture, outputType });
+			const { svg, stats } = await render({ files, outputType });
 
 			expect(svg).toBe('<svg><g class="node"></g></svg>');
 			expect(stats).toEqual({ modules: 1, dependencies: 0 });
@@ -52,21 +52,16 @@ describe('render when Graphviz cannot route orthogonal edges', { timeout: 60_000
 	);
 
 	it('falls back to curves with a dependency-cruiser config that leaves the edges alone', async () => {
-		const { svg } = await render({
-			files,
-			cwd: fixture,
-			config: 'dependency-cruiser.strict.json',
-			outputType: 'dot',
-		});
+		const { svg } = await render({ files, config: 'dependency-cruiser.strict.json', outputType: 'dot' });
 
 		expect(svg).toBe('<svg><g class="node"></g></svg>');
 		expect(programs).toHaveLength(2);
 	});
 
 	it('reports the failure when a dependency-cruiser config asked for them', async () => {
-		await expect(
-			render({ files, cwd: fixture, config: 'dependency-cruiser.ortho.json', outputType: 'dot' }),
-		).rejects.toThrow('memory access out of bounds');
+		await expect(render({ files, config: 'dependency-cruiser.ortho.json', outputType: 'dot' })).rejects.toThrow(
+			'memory access out of bounds',
+		);
 		expect(programs).toHaveLength(1);
 	});
 });

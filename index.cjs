@@ -136,16 +136,16 @@ exports.handlers = {
  * @private
  * @param {object} job
  * @param {string[]} job.files Source files, relative to `cwd`.
- * @param {string} job.cwd Project root.
- * @param {string} [job.config] Path to a dependency-cruiser config file.
+ * @param {string} job.cwd Working directory of the child process.
+ * @param {string} [job.config] Path to a dependency-cruiser config file, resolved against `cwd`.
  * @param {string} job.outputType dependency-cruiser reporter that draws the graph.
  * @param {boolean} [job.coreModules] Whether Node.js built-ins stay in the graph.
  * @param {boolean} [job.unresolvableModules] Whether unresolvable imports stay in the graph.
  * @returns {{svg: string, prefix: string, stats: {modules: number, dependencies: number}, violations: ({report: string}|null)}}
  */
-const renderGraph = (job) => {
+const renderGraph = ({ cwd, ...job }) => {
 	const stdout = execFileSync(process.execPath, [require.resolve('./lib/render.mjs')], {
-		cwd: job.cwd,
+		cwd,
 		input: JSON.stringify({ ...job, prefix: LINK_PREFIX }),
 		encoding: 'utf8',
 		maxBuffer: 256 * 1024 * 1024,
