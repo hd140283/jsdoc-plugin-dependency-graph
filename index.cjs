@@ -102,9 +102,13 @@ exports.handlers = {
 				sourcePages: env.conf.templates?.default?.outputSourceFiles !== false,
 			});
 			svg = linkNodes(svg, LINK_PREFIX, urls);
-		} else {
+		} else if (rendered.prefix) {
 			logger.info(
 				`dependency-graph: nodes link to the prefix in the dependency-cruiser config ("${rendered.prefix}") instead of the generated pages`,
+			);
+		} else {
+			logger.info(
+				'dependency-graph: the prefix in the dependency-cruiser config is empty, so nodes link to the source files instead of the generated pages',
 			);
 		}
 		const fragment = buildFragment({

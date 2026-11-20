@@ -156,6 +156,17 @@ describe('processingComplete', { timeout: 60_000 }, () => {
 		expect(logged.error).toEqual([]);
 	});
 
+	it('leaves the links to the source files with an empty prefix in a dependency-cruiser config', () => {
+		const readme = run({ config: 'dependency-cruiser.empty-prefix.json' });
+
+		expect(readme).toContain('href="src/index.js"');
+		expect(readme).not.toContain('href="module-app.html"');
+		expect(logged.info).toEqual([
+			'dependency-graph: the prefix in the dependency-cruiser config is empty, so nodes link to the source files instead of the generated pages',
+			'dependency-graph: 4 modules, 3 dependencies',
+		]);
+	});
+
 	it('draws the graph with the reporter named by outputType', () => {
 		const readme = run({ outputType: 'archi' });
 
