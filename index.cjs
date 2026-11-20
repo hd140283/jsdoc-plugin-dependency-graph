@@ -30,6 +30,9 @@ const { OUTPUT_TYPES } = require('./lib/output-types.cjs');
 // left as dependency-cruiser drew them.
 const LINK_PREFIX = 'jsdoc://';
 
+// Values accepted as `placement`.
+const PLACEMENTS = ['prepend', 'append', 'replace'];
+
 const DEFAULTS = {
 	config: undefined,
 	outputType: 'dot',
@@ -64,6 +67,12 @@ exports.handlers = {
 		if (!OUTPUT_TYPES.includes(conf.outputType)) {
 			logger.error(
 				`dependency-graph: unsupported outputType "${conf.outputType}". Use one of: ${OUTPUT_TYPES.join(', ')}.`,
+			);
+			return;
+		}
+		if (!PLACEMENTS.includes(conf.placement)) {
+			logger.error(
+				`dependency-graph: unsupported placement "${conf.placement}". Use one of: ${PLACEMENTS.join(', ')}.`,
 			);
 			return;
 		}

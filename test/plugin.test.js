@@ -201,6 +201,15 @@ describe('processingComplete', { timeout: 60_000 }, () => {
 		]);
 	});
 
+	it('logs an error and leaves the README alone when placement is not supported', () => {
+		const readme = run({ placement: 'before' });
+
+		expect(readme).toBe(README);
+		expect(logged.error).toEqual([
+			'dependency-graph: unsupported placement "before". Use one of: prepend, append, replace.',
+		]);
+	});
+
 	it('warns about rule violations and still draws the graph', () => {
 		const readme = run({ config: 'dependency-cruiser.strict.json' });
 
