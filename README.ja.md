@@ -67,15 +67,17 @@ JSDoc の設定ファイルの `plugins` に追加します。
 {
 	"options": {
 		"doNotFollow": { "path": "node_modules" },
-		"exclude": { "path": "node_modules" },
 		"reporterOptions": {
-			"dot": { "theme": { "graph": { "splines": "ortho" } } }
+			"dot": {
+				"filters": { "exclude": { "path": "node_modules" } },
+				"theme": { "graph": { "splines": "ortho" } }
+			}
 		}
 	}
 }
 ```
 
-この `exclude` があるので、`node_modules` のパッケージに関するルールは働きません。パッケージも対象にするには、設定ファイルで `"exclude": { "path": "" }` を指定してください。
+この `filters` は `node_modules` のパッケージをグラフから外すだけで、ルールはパッケージにも適用されます。パッケージを描くには、設定ファイルでこの `path` を `""` にしてください。
 
 グラフが大きすぎて既定の直角の矢印で描けないときは、曲線で描画します。
 

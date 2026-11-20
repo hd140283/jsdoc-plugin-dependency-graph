@@ -218,8 +218,20 @@ describe('render on a project that depends on a package', { timeout: 60_000 }, (
 		write('src/index.js', "import 'dep';\n");
 		write('node_modules/dep/package.json', JSON.stringify({ name: 'dep', version: '1.0.0', main: 'index.js' }));
 		write('node_modules/dep/index.js', 'module.exports = 1;\n');
-		write('rules.json', JSON.stringify({ options: { maxDepth: 5 } }));
-		write('packages.json', JSON.stringify({ options: { exclude: { path: '' } } }));
+		write(
+			'rules.json',
+			JSON.stringify({
+				forbidden: [
+					{ name: 'no-orphans', severity: 'error', from: { orphan: true }, to: {} },
+					{ name: 'no-dep', severity: 'error', from: {}, to: { path: 'node_modules/dep' } },
+				],
+			}),
+		);
+		write('exclude.json', JSON.stringify({ options: { exclude: { path: '\\.spec\\.js$' } } }));
+		write(
+			'packages.json',
+			JSON.stringify({ options: { reporterOptions: { dot: { filters: { exclude: { path: '' } } } } } }),
+		);
 		process.chdir(project);
 	});
 	afterAll(() => {
@@ -229,7 +241,8 @@ describe('render on a project that depends on a package', { timeout: 60_000 }, (
 
 	it.each([
 		['without a dependency-cruiser config', undefined],
-		['with a dependency-cruiser config that leaves exclude alone', 'rules.json'],
+		['with a dependency-cruiser config that has rules', 'rules.json'],
+		['with a dependency-cruiser config that has an exclude of its own', 'exclude.json'],
 	])('leaves the package out %s', async (_description, config) => {
 		const { svg, stats } = await render({ files, cwd: project, config });
 
@@ -237,7 +250,14 @@ describe('render on a project that depends on a package', { timeout: 60_000 }, (
 		expect(svg).not.toContain('node_modules');
 	});
 
-	it('draws the package when the dependency-cruiser config empties exclude', async () => {
+	it('still checks the rules against the package it leaves out', async () => {
+		const { violations } = await render({ files, cwd: project, config: 'rules.json' });
+
+		expect(violations.report).toContain('no-dep');
+		expect(violations.report).not.toContain('no-orphans');
+	});
+
+	it('draws the package when the dependency-cruiser config empties the filter', async () => {
 		const { svg, stats } = await render({ files, cwd: project, config: 'packages.json' });
 
 		expect(stats).toEqual({ modules: 2, dependencies: 1 });

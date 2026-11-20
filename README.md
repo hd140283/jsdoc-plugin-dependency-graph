@@ -75,17 +75,19 @@ config over them, so whatever you set yourself wins:
 {
 	"options": {
 		"doNotFollow": { "path": "node_modules" },
-		"exclude": { "path": "node_modules" },
 		"reporterOptions": {
-			"dot": { "theme": { "graph": { "splines": "ortho" } } }
+			"dot": {
+				"filters": { "exclude": { "path": "node_modules" } },
+				"theme": { "graph": { "splines": "ortho" } }
+			}
 		}
 	}
 }
 ```
 
-Because of this `exclude`, rules about the packages in `node_modules` never
-fire. To bring the packages back, set `"exclude": { "path": "" }` in your
-config.
+The filter only keeps the packages in `node_modules` out of the graph; your
+rules still apply to them. To draw the packages, set that `path` to `""` in
+your config.
 
 When a graph is too large for the default right-angled edges, the plugin draws
 curves instead.
