@@ -110,8 +110,8 @@ Files with no documented symbols get no page from JSDoc, so their nodes are
 drawn without a link. The same goes for nodes that stand for a folder, which
 is what `"ddot"`, `"archi"` and a `collapsePattern` draw.
 
-When two symbols have page names that differ only in case, the link may point
-to the wrong page.
+When two pages would get the same file name, for example names that differ
+only in case, the link may point to the wrong page.
 
 If your dependency-cruiser config sets a `prefix`, every node links to that
 prefix followed by the source path, just as in dependency-cruiser's own
