@@ -60,7 +60,7 @@ Put them under `dependencyGraph` in the JSDoc configuration:
 | `title`               | `"Dependency graph"` | Heading above the graph. `false` for none.                                                                                                    |
 | `stats`               | `true`               | Show the module and dependency counts under the heading.                                                                                      |
 | `hoverHighlight`      | `true`               | Highlight a node's neighbours on hover, and pin the highlight on right-click.                                                                 |
-| `failOnViolation`     | `false`              | Treat dependency-cruiser rule violations as errors, so that JSDoc exits with a failure.                                                       |
+| `failOnViolation`     | `false`              | Treat dependency-cruiser rule violations of `error` severity as errors, so that JSDoc exits with a failure.                                   |
 | `coreModules`         | `false`              | Keep Node.js built-in modules in the graph.                                                                                                   |
 | `unresolvableModules` | `false`              | Keep the imports dependency-cruiser could not resolve in the graph.                                                                           |
 

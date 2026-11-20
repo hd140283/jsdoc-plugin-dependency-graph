@@ -84,6 +84,14 @@ describe('render', { timeout: 60_000 }, () => {
 		expect(violations).not.toBeNull();
 		expect(violations.report).toContain('no-shouting');
 		expect(violations.report).toContain('src/lib/shout.js');
+		expect(violations.exitCode).toBe(1);
+	});
+
+	it('reports the violations of a rule of warn severity with exit code 0', async () => {
+		const { violations } = await render({ files, config: 'dependency-cruiser.warn.json', outputType: 'dot' });
+
+		expect(violations.report).toContain('no-shouting');
+		expect(violations.exitCode).toBe(0);
 	});
 
 	it('fails on a missing config file', async () => {

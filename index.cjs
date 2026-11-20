@@ -91,7 +91,7 @@ exports.handlers = {
 
 		if (rendered.violations) {
 			const report = `dependency-graph: dependency-cruiser reported rule violations.\n${rendered.violations.report}`;
-			if (conf.failOnViolation) {
+			if (conf.failOnViolation && rendered.violations.exitCode !== 0) {
 				logger.error(report);
 			} else {
 				logger.warn(report);

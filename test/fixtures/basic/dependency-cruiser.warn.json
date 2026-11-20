@@ -1,0 +1,10 @@
+{
+	"forbidden": [
+		{
+			"name": "no-shouting",
+			"severity": "warn",
+			"from": { "path": "^src/index\\.js$" },
+			"to": { "path": "^src/lib/shout\\.js$" }
+		}
+	]
+}

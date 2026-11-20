@@ -228,6 +228,17 @@ describe('processingComplete', { timeout: 60_000 }, () => {
 		expect(logged.warn).toEqual([]);
 	});
 
+	it.each([
+		['by default', undefined],
+		['when failOnViolation is set', true],
+	])('warns about the violations of a rule of warn severity %s', (_description, failOnViolation) => {
+		run({ config: 'dependency-cruiser.warn.json', failOnViolation });
+
+		expect(logged.warn).toHaveLength(1);
+		expect(logged.warn[0]).toContain('no-shouting');
+		expect(logged.error).toEqual([]);
+	});
+
 	it('logs an error and leaves the README alone when rendering fails', () => {
 		const readme = run({ config: 'nope.json' });
 

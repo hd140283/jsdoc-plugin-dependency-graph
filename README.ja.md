@@ -55,7 +55,7 @@ JSDoc の設定ファイルの `plugins` に追加します。
 | `title`               | `"Dependency graph"` | グラフの見出し。`false` にすると見出しを表示しません。                                                                                      |
 | `stats`               | `true`               | 見出しの下にモジュール数と依存関係の数を表示するかどうか。                                                                                  |
 | `hoverHighlight`      | `true`               | ホバー時の強調表示と右クリックでの固定を有効にするかどうか。                                                                                |
-| `failOnViolation`     | `false`              | `true` にすると、dependency-cruiser のルール違反をエラーとして扱い、JSDoc をエラー終了させます。                                            |
+| `failOnViolation`     | `false`              | `true` にすると、dependency-cruiser の severity が `error` のルール違反をエラーとして扱い、JSDoc をエラー終了させます。                     |
 | `coreModules`         | `false`              | Node.js の組み込みモジュールをグラフに残すかどうか。                                                                                        |
 | `unresolvableModules` | `false`              | dependency-cruiser が解決できなかった import をグラフに残すかどうか。                                                                       |
 
