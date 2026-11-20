@@ -26,9 +26,15 @@ describe('pageFileName', () => {
 		expect(pageFileName('~inner')).toBe('inner.html');
 	});
 
-	it('falls back to an underscore when nothing is left', () => {
-		expect(pageFileName('')).toBe('_.html');
-		expect(pageFileName(undefined)).toBe('_.html');
-		expect(pageFileName('.')).toBe('_.html');
+	it('puts a dash in front of a leading underscore', () => {
+		expect(pageFileName('_Foo')).toBe('-_Foo.html');
+		expect(pageFileName('_loose.js')).toBe('-_loose.js.html');
+		expect(pageFileName('module:_mod')).toBe('module-_mod.html');
+	});
+
+	it('falls back to an underscore behind a dash when nothing is left', () => {
+		expect(pageFileName('')).toBe('-_.html');
+		expect(pageFileName(undefined)).toBe('-_.html');
+		expect(pageFileName('.')).toBe('-_.html');
 	});
 });
