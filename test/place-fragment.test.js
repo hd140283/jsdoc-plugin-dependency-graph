@@ -5,7 +5,7 @@ describe('placeFragment', () => {
 	const readme = '<p>README</p>';
 	const fragment = '<section>graph</section>';
 
-	it('prepends by default', () => {
+	it('prepends', () => {
 		expect(placeFragment(readme, fragment, 'prepend')).toBe(`${fragment}\n${readme}`);
 	});
 
