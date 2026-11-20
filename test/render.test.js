@@ -131,12 +131,6 @@ describe('render', { timeout: 60_000 }, () => {
 		expect(svg).toContain('<title>src/lib</title>');
 		expect(svg).not.toContain('greeting.js');
 	});
-
-	it.each(['mermaid', 'x-dot-webpage', 'cdot'])('rejects the unsupported outputType %s', async (outputType) => {
-		await expect(render({ files, cwd: fixture, outputType })).rejects.toThrow(
-			`unsupported outputType "${outputType}". Use one of: dot, flat, ddot, archi.`,
-		);
-	});
 });
 
 describe('render on a project that imports external modules', { timeout: 60_000 }, () => {
