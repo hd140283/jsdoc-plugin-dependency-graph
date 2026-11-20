@@ -21,6 +21,26 @@ describe('linkNodes', () => {
 		expect(linkNodes(svg, 'jsdoc://', urls)).toBe('<a xlink:title="plain">');
 	});
 
+	it('reads the characters Graphviz writes as entities', () => {
+		const svg =
+			'<a xlink:href="jsdoc://src/a&amp;b.js">' +
+			'<a xlink:href="jsdoc://src/it&#39;s.js">' +
+			'<a xlink:href="jsdoc://src/&lt;x&gt;&quot;.js">' +
+			'<a xlink:href="jsdoc://src/&amp;lt;.js">';
+		const pages = new Map([
+			['src/a&b.js', 'global.html#a'],
+			["src/it's.js", 'global.html#b'],
+			['src/<x>".js', 'global.html#c'],
+			['src/&lt;.js', 'global.html#d'],
+		]);
+		expect(linkNodes(svg, 'jsdoc://', pages)).toBe(
+			'<a xlink:href="global.html#a">' +
+				'<a xlink:href="global.html#b">' +
+				'<a xlink:href="global.html#c">' +
+				'<a xlink:href="global.html#d">',
+		);
+	});
+
 	it('leaves links with another scheme alone', () => {
 		const svg = '<a href="https://example.com/">';
 		expect(linkNodes(svg, 'jsdoc://', urls)).toBe(svg);
