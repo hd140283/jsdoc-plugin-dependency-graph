@@ -20,6 +20,7 @@ const { buildFragment } = require('./lib/build-fragment.cjs');
 const { linkNodes } = require('./lib/link-nodes.cjs');
 const { placeFragment } = require('./lib/place-fragment.cjs');
 const { OUTPUT_TYPES } = require('./lib/output-types.cjs');
+const { PLACEMENTS } = require('./lib/placements.cjs');
 
 // Marker scheme used for node links in the generated SVG. dependency-cruiser
 // always emits a URL per node (the source path, or nodejs.org / npmjs.com for
@@ -29,9 +30,6 @@ const { OUTPUT_TYPES } = require('./lib/output-types.cjs');
 // dependency-cruiser config takes the marker's place, and the links are then
 // left as dependency-cruiser drew them.
 const LINK_PREFIX = 'jsdoc://';
-
-// Values accepted as `placement`.
-const PLACEMENTS = ['prepend', 'append', 'replace'];
 
 const DEFAULTS = {
 	config: undefined,
@@ -70,9 +68,9 @@ exports.handlers = {
 			);
 			return;
 		}
-		if (!PLACEMENTS.includes(conf.placement)) {
+		if (!Object.hasOwn(PLACEMENTS, conf.placement)) {
 			logger.error(
-				`dependency-graph: unsupported placement "${conf.placement}". Use one of: ${PLACEMENTS.join(', ')}.`,
+				`dependency-graph: unsupported placement "${conf.placement}". Use one of: ${Object.keys(PLACEMENTS).join(', ')}.`,
 			);
 			return;
 		}
