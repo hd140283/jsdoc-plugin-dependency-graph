@@ -192,6 +192,42 @@ describe('render on a project with a .dependency-cruiser config file', { timeout
 	});
 });
 
+describe('render on a project with a TypeScript .dependency-cruiser config file', { timeout: 60_000 }, () => {
+	// The background colour tells that the config was read.
+	const config = "{ options: { reporterOptions: { dot: { theme: { graph: { bgcolor: 'lightyellow' } } } } } }";
+	let project;
+
+	beforeAll(() => {
+		project = fs.mkdtempSync(path.join(os.tmpdir(), 'jsdoc-plugin-dependency-graph-typescript-'));
+		fs.mkdirSync(path.join(project, 'src'));
+		fs.writeFileSync(
+			path.join(project, 'package.json'),
+			JSON.stringify({ name: 'app', private: true, type: 'module' }),
+		);
+		fs.writeFileSync(path.join(project, 'src', 'index.js'), 'export const main = 1;\n');
+		process.chdir(project);
+	});
+	afterAll(() => {
+		process.chdir(fixture);
+		fs.rmSync(project, { recursive: true, force: true });
+	});
+
+	it.each([
+		['.dependency-cruiser.ts', `const config: object = ${config};\nexport default config;\n`],
+		['.dependency-cruiser.cts', `const config: object = ${config};\nmodule.exports = config;\n`],
+		['.dependency-cruiser.mts', `const config: object = ${config};\nexport default config;\n`],
+	])('picks %s up without being told where it is', async (name, content) => {
+		fs.writeFileSync(name, content);
+		try {
+			const { svg } = await render({ files, outputType: 'dot' });
+
+			expect(svg).toContain('lightyellow');
+		} finally {
+			fs.rmSync(name);
+		}
+	});
+});
+
 describe('render on a project that depends on a package', { timeout: 60_000 }, () => {
 	let project;
 
