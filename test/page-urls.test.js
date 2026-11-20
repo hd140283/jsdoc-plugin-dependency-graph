@@ -109,6 +109,7 @@ describe('pageUrls', () => {
 		const urls = pageUrls({
 			cwd,
 			doclets: [
+				// The package doclet as JSDoc makes it: without `meta`.
 				{ kind: 'package', longname: 'package:x', name: 'x' },
 				doclet('src/plain.js', {
 					kind: 'constant',
@@ -129,11 +130,10 @@ describe('pageUrls', () => {
 		expect(urls.size).toBe(0);
 	});
 
-	it('ignores package doclets, ignored doclets and members of anonymous scopes', () => {
+	it('ignores ignored doclets and members of anonymous scopes', () => {
 		const urls = pageUrls({
 			cwd,
 			doclets: [
-				doclet('package.json', { kind: 'package', longname: 'package:x', name: 'x' }),
 				doclet('src/skipped.js', {
 					kind: 'function',
 					longname: 'skipped',
