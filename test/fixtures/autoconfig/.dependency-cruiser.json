@@ -1,6 +1,5 @@
 {
 	"options": {
-		"doNotFollow": { "path": "node_modules" },
 		"reporterOptions": {
 			"dot": { "theme": { "graph": { "bgcolor": "lightyellow" } } }
 		}
